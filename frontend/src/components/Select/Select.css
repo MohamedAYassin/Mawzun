@@ -1,0 +1,88 @@
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  /* Fixed height + horizontal-only padding, matching .pb-input (2.5rem). With
+     symmetric vertical padding it measured 37px against the inputs' 40px, so a
+     select never lined up with the text field beside it. */
+  box-sizing: border-box;
+  height: 2.5rem;
+  cursor: pointer;
+  text-align: right;
+  direction: rtl;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.custom-select-trigger:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+.custom-select-trigger:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.custom-select-trigger span:first-child {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-select-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  direction: rtl;
+}
+
+.custom-select-option {
+  padding: 0.6rem 0.7rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.12s;
+  text-align: right;
+}
+
+.custom-select-option:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.custom-select-option-selected {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-weight: 600;
+}

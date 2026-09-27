@@ -1,0 +1,157 @@
+.module-tabs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.55rem 1.5rem;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  direction: rtl;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  box-shadow: 0 1px 0 var(--border-color);
+}
+
+.module-tabs-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  padding-left: 1rem;
+  border-inline-start: 1px solid var(--border-color);
+}
+
+.module-tabs-icon {
+  display: inline-flex;
+  color: var(--color-accent);
+}
+
+.module-tabs-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/*
+ * The tab strip scrolls horizontally with its scrollbar hidden, so on its own
+ * it gives no sign that more tabs exist off-screen. This wrapper anchors an
+ * edge shadow over the strip: the shadow has to sit outside the scrolling
+ * element, or it would scroll away with the content it is describing.
+ *
+ * The dashboard is RTL, so the inline-start edge is the right-hand one.
+ */
+.module-tabs-scroll {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.module-tabs-scroll::before,
+.module-tabs-scroll::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  width: 2rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+/* Content scrolled out of view at the start edge — shadow on the right. */
+.module-tabs-scroll::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to left, var(--scroll-shadow), transparent);
+}
+
+/* Content scrolled out of view at the end edge — shadow on the left. */
+.module-tabs-scroll::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to right, var(--scroll-shadow), transparent);
+}
+
+.module-tabs-scroll.overflow-start::before,
+.module-tabs-scroll.overflow-end::after {
+  opacity: 1;
+}
+
+.module-tabs-list {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.module-tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.module-tab {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.module-tab:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.module-tab.active {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.module-tabs-search {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.module-tabs-search:hover {
+  background: var(--bg-primary);
+  border-color: var(--color-accent);
+  color: var(--text-secondary);
+}
+
+.module-tabs-search kbd {
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .module-tabs {
+    padding: 0.5rem 1rem;
+  }
+
+  .module-tabs-heading,
+  .module-tabs-search span {
+    display: none;
+  }
+}

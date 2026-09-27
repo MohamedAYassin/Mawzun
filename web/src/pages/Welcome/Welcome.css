@@ -1,0 +1,1107 @@
+.landing {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.landing-shell {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+.landing h1,
+.landing h2,
+.landing h3 {
+  font-family: var(--font-heading);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* ── Nav ── */
+.landing-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: var(--backdrop-blur);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.landing-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 66px;
+}
+
+.landing-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-md);
+}
+
+.landing-brand img {
+  width: 36px;
+  height: 36px;
+}
+
+.landing-brand img.brand-wordmark {
+  width: auto;
+  height: 26px;
+}
+
+button.landing-brand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.landing-nav-links {
+  display: flex;
+  gap: 1.4rem;
+}
+
+.landing-nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  transition: color var(--transition);
+}
+
+.landing-nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-btn,
+.landing-btn-ghost,
+.landing-btn-outline {
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+
+.landing-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.landing-btn-ghost:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.landing-btn {
+  background: var(--color-accent);
+  color: var(--color-white);
+  box-shadow: 0 8px 20px -10px var(--color-accent);
+}
+
+.landing-btn:hover {
+  background: var(--color-accent-hover);
+}
+
+.landing-btn-outline {
+  background: var(--bg-primary);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.landing-btn-outline:hover {
+  background: var(--bg-secondary);
+}
+
+.landing-btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: var(--fs-md);
+}
+
+/* ── Hero ── */
+.landing-hero {
+  padding: 4.5rem 0 3rem;
+  background:
+    radial-gradient(900px 380px at 50% -8%, var(--color-accent-soft), transparent 70%),
+    var(--bg-primary);
+}
+
+.landing-hero-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-badge {
+  display: inline-block;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.landing-hero h1 {
+  margin-top: 1.15rem;
+  font-size: clamp(2rem, 5vw, 3.35rem);
+  line-height: 1.2;
+  font-weight: 700;
+  max-width: 20ch;
+}
+
+.landing-hero-sub {
+  margin: 1.1rem 0 0;
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: var(--fs-md);
+  line-height: 1.85;
+}
+
+.landing-hero-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.landing-hero-note {
+  margin: 1.1rem 0 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* ── App preview ── */
+.landing-preview {
+  margin-top: 3rem;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.preview-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.preview-bar span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.preview-body {
+  display: flex;
+  text-align: start;
+  /* Fixed height, not just min-height: this card is decorative (aria-hidden)
+     and its content is text, so a font swap would otherwise resize it and push
+     everything below it down — the single layout shift Lighthouse still reports.
+     Reserving the final height makes the swap a no-op. 19rem (304px) is measured
+     to just contain the sidebar column (303px) at the widest breakpoint. */
+  height: 19rem;
+}
+
+.preview-side {
+  width: 170px;
+  flex-shrink: 0;
+  padding: 0.9rem 0.6rem;
+  background: var(--bg-primary);
+  border-inline-end: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.preview-side-item {
+  padding: 0.42rem 0.6rem;
+  border-radius: var(--radius-xs);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.preview-side-item:first-child {
+  background: var(--text-primary);
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.preview-main {
+  flex: 1;
+  padding: 1.1rem;
+  background: var(--bg-canvas);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.preview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+}
+
+.preview-stat {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.preview-stat strong {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+}
+
+.preview-stat span {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.preview-rows {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.preview-row {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+}
+
+.preview-row:nth-child(even) {
+  width: 78%;
+}
+
+/* ── Sections ── */
+.landing-section {
+  padding: 4rem 0;
+}
+
+.landing-section-alt {
+  background: var(--bg-canvas);
+  border-block: 1px solid var(--border-color);
+}
+
+.landing-section h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.landing-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.landing-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.landing-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.landing-card,
+.landing-module,
+.landing-step {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.landing-card:hover,
+.landing-module:hover,
+.landing-step:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--card-shadow);
+  transform: translateY(-2px);
+}
+
+.landing-card h3,
+.landing-module h3,
+.landing-step h3 {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.landing-card p,
+.landing-module p,
+.landing-step p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-base);
+  line-height: 1.8;
+}
+
+.landing-module-num,
+.landing-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-xs);
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.landing-step-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 0;
+}
+
+/* ── FAQ ── */
+.landing-faq {
+  max-width: 780px;
+}
+
+.landing-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.landing-faq-item {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.landing-faq-item.open {
+  border-color: var(--border-strong);
+}
+
+.landing-faq-item button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  background: transparent;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: start;
+}
+
+.landing-faq-sign {
+  color: var(--color-accent);
+  font-size: var(--fs-lg);
+  line-height: 1;
+}
+
+.landing-faq-item p {
+  margin: 0;
+  padding: 0 1.15rem 1.1rem;
+  color: var(--text-secondary);
+  font-size: var(--fs-base);
+  line-height: 1.85;
+}
+
+/* ── CTA + footer ── */
+.landing-cta {
+  padding: 4.5rem 0;
+  background: var(--text-primary);
+  color: var(--color-white);
+}
+
+.landing-cta-inner {
+  text-align: center;
+}
+
+.landing-cta h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 700;
+}
+
+.landing-cta p {
+  margin: 0.8rem 0 0;
+  color: var(--text-muted-light);
+  font-size: var(--fs-md);
+}
+
+.landing-cta .landing-btn-outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--color-white);
+}
+
+.landing-cta .landing-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.landing-footer {
+  padding: 2.5rem 0 0;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+
+.foot-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.foot-grid nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.foot-grid nav h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.foot-grid nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.88rem;
+}
+
+.foot-grid nav a:hover {
+  color: var(--color-accent);
+}
+
+.foot-bottom {
+  border-top: 1px solid var(--border-color);
+  padding: 1.1rem 0 1.4rem;
+  text-align: center;
+}
+
+.foot-bottom p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.foot-bottom p + p {
+  margin-top: 0.35rem;
+}
+
+.foot-bottom a {
+  /* accent-hover: the plain accent is 3.48:1 on the footer background and fails
+     WCAG AA for this text size; this is 4.9:1. */
+  color: var(--color-accent-hover);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.landing-footer p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 900px) {
+  .foot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .landing-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .landing-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .landing-nav-links {
+    display: none;
+  }
+  .preview-side {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .landing-grid-3,
+  .landing-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .preview-stats {
+    grid-template-columns: 1fr;
+  }
+  /* Below this width the sidebar column wraps taller than the desktop height,
+     so release the fixed height (it exists only to stop font-swap CLS, and
+     that shift is not measurable here). */
+  .preview-body {
+    height: auto;
+  }
+}
+
+/* ── Hero: refined glass depth ── */
+@keyframes badge-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+.landing-hero {
+  position: relative;
+  overflow: clip;
+  padding-bottom: 6rem;
+}
+
+/* Fine grain noise, barely-there.
+   NOTE: kept as a tiled data-URI SVG (no `filter`), rasterized once. */
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Soft mesh-gradient glows.
+   Rendered as a single background layer of pre-softened radial gradients
+   instead of `filter: blur(110px)` on two ~46rem elements. A CSS blur makes the
+   compositor allocate an offscreen buffer padded by ~3x the blur radius and
+   re-blur it on composite; at zoom that buffer grows quadratically (hundreds of
+   megapixels), which is what made the hero lag when zoomed. Gradients are
+   rasterized once and cost nothing per frame, at any zoom. */
+.landing-hero {
+  background-image:
+    radial-gradient(46rem 34rem at 100% -8rem, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 70%),
+    radial-gradient(40rem 30rem at 0% 100%, color-mix(in srgb, var(--color-accent) 10%, transparent), transparent 70%);
+}
+.landing-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 24px -8px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+.badge-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+.badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: badge-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.landing-hero .landing-btn-lg {
+  box-shadow: 0 18px 40px -12px color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+/* ── Elevated glass preview card ── */
+.hero-stage {
+  position: relative;
+  width: 100%;
+  margin-top: 3.5rem;
+}
+/* Glow behind the preview card. Was `filter: blur(70px)` + an infinite
+   opacity/scale animation — animating a property on a blurred layer keeps the
+   blur permanently dirty. Now a static radial gradient (no filter, no
+   animation): same soft halo, zero per-frame cost. */
+.hero-stage::before {
+  content: '';
+  position: absolute;
+  inset: 8% 6% -8%;
+  background: radial-gradient(
+    ellipse 55% 55% at 50% 50%,
+    color-mix(in srgb, var(--color-accent) 14%, transparent),
+    transparent 70%
+  );
+  border-radius: 3rem;
+  z-index: -1;
+  pointer-events: none;
+}
+/* Solid card over the hero gradient. The old `backdrop-filter: blur(14px)`
+   forced a full backdrop re-sample of everything behind the card (the hero
+   glow) on every composite — the most expensive pattern in the hero, and
+   invisible here since the backdrop is a flat gradient. */
+.landing-preview {
+  position: relative;
+  margin-top: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 32px 64px -16px rgba(15, 23, 42, 0.12),
+    0 72px 128px -40px color-mix(in srgb, var(--color-accent) 26%, transparent);
+}
+
+/* ── Floating integration chips ── */
+.hero-floats {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.hero-float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  text-decoration: none;
+  color: inherit;
+  pointer-events: auto;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 16px 36px -12px rgba(15, 23, 42, 0.18);
+  /* Was `hero-float` animating perspective()/rotateY()/rotate() on transform
+     over a `backdrop-filter` — 5 chips permanently re-sampling the backdrop in
+     3D. Now a cheap 2D translate only, no backdrop-filter. */
+  animation: hero-float 6s ease-in-out infinite;
+  /* Static tilt per chip, kept off `transform` so the 2D float animation owns it.
+     (`rotate` is an independent transform property, composited just as cheaply.) */
+  rotate: var(--r, 0deg);
+  will-change: transform;
+}
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.hero-float-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, currentColor 12%, var(--bg-primary));
+  flex-shrink: 0;
+}
+.hero-float-icon svg,
+.hero-float-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.hero-float-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+}
+.hero-float-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.hero-float-sub {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.float-shopify {
+  top: -2.6rem;
+  inset-inline-end: 1rem;
+  color: #5e8e3e;
+  --r: 2deg;
+  animation-delay: 0s;
+}
+.float-codex {
+  top: -2.6rem;
+  inset-inline-start: 1rem;
+  color: var(--text-primary);
+  --r: -3deg;
+  animation-delay: 1.2s;
+}
+.float-claude {
+  top: 48%;
+  inset-inline-end: -2.4rem;
+  color: #d97757;
+  --r: 3deg;
+  animation-delay: 2s;
+}
+.float-hermes {
+  bottom: -1.7rem;
+  inset-inline-start: 12%;
+  color: var(--color-accent);
+  --r: -2deg;
+  animation-delay: 2.8s;
+}
+.float-clawdbot {
+  bottom: -1.7rem;
+  inset-inline-end: 14%;
+  color: #c2410c;
+  --r: 2deg;
+  animation-delay: 0.8s;
+}
+
+@media (max-width: 900px) {
+  .float-claude,
+  .float-hermes,
+  .float-clawdbot {
+    display: none;
+  }
+  .float-shopify { inset-inline-end: 0; top: -2.4rem; }
+  .float-codex { inset-inline-start: -0.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-float,
+  .badge-dot::after {
+    animation: none;
+  }
+}
+
+/* ── Polish: sections, cards, FAQ, CTA, footer ── */
+.landing-section {
+  padding: 5.5rem 0;
+  position: relative;
+}
+
+.landing-section-alt {
+  background:
+    radial-gradient(600px 240px at 80% 0%, color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 70%),
+    var(--bg-canvas);
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 2.5rem;
+}
+
+.section-eyebrow {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+  /* accent-hover (#2563eb), not accent (#3b82f6): the plain accent is only 3.32:1
+     on this tinted background and fails WCAG AA. This passes at 4.67:1. */
+  color: var(--color-accent-hover);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.landing-section h2 {
+  margin-bottom: 0;
+  font-size: clamp(1.6rem, 3.2vw, 2.15rem);
+  line-height: 1.35;
+  max-width: 26ch;
+}
+
+/* cards */
+.landing-card,
+.landing-module,
+.landing-step {
+  position: relative;
+  padding: 1.6rem 1.5rem;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-primary) 100%, transparent), color-mix(in srgb, var(--bg-canvas) 60%, var(--bg-primary)));
+  border: 1px solid color-mix(in srgb, var(--border-color) 90%, transparent);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 24px -18px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.landing-card::before,
+.landing-module::before,
+.landing-step::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.landing-card:hover,
+.landing-module:hover,
+.landing-step:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--color-accent) 34%, var(--border-color));
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.05),
+    0 22px 45px -26px color-mix(in srgb, var(--color-accent) 45%, rgba(15, 23, 42, 0.4));
+}
+
+.landing-card:hover::before,
+.landing-module:hover::before,
+.landing-step:hover::before {
+  opacity: 1;
+}
+
+.landing-card h3,
+.landing-module h3,
+.landing-step h3 {
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  margin-bottom: 0.55rem;
+}
+
+.landing-module-num {
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+.landing-step-num {
+  width: 38px;
+  height: 38px;
+  font-size: var(--fs-base);
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 10px 22px -12px var(--color-accent);
+}
+
+/* connector line between steps */
+.landing-steps {
+  position: relative;
+  gap: 1.15rem;
+}
+
+/* FAQ */
+.landing-faq-item {
+  border-radius: 16px;
+  background: var(--bg-primary);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.landing-faq-item:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 28%, var(--border-color));
+}
+
+.landing-faq-item.open {
+  border-color: color-mix(in srgb, var(--color-accent) 38%, var(--border-color));
+  box-shadow: 0 18px 38px -28px color-mix(in srgb, var(--color-accent) 60%, rgba(15, 23, 42, 0.5));
+}
+
+.landing-faq-item button {
+  padding: 1.15rem 1.3rem;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.landing-faq-sign {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.landing-faq-item.open .landing-faq-sign {
+  transform: rotate(180deg);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.landing-faq-item p {
+  padding: 0 1.3rem 1.25rem;
+  animation: faq-reveal 0.3s ease both;
+}
+
+@keyframes faq-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* CTA */
+.landing-cta {
+  position: relative;
+  overflow: clip;
+  padding: 6rem 0;
+  background:
+    radial-gradient(700px 320px at 50% 0%, color-mix(in srgb, var(--color-accent) 40%, transparent), transparent 72%),
+    linear-gradient(160deg, #0d1526, var(--text-primary));
+}
+
+.landing-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.landing-cta-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-cta h2 {
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+  line-height: 1.4;
+  max-width: 24ch;
+  margin-inline: auto;
+}
+
+.landing-cta p {
+  max-width: 52ch;
+  margin-inline: auto;
+  line-height: 1.85;
+}
+
+.landing-cta .landing-hero-actions {
+  margin-top: 2rem;
+}
+
+.landing-cta .landing-btn {
+  background: var(--color-white);
+  color: var(--text-primary);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+}
+
+.landing-cta .landing-btn:hover {
+  background: color-mix(in srgb, var(--color-white) 92%, var(--color-accent));
+}
+
+/* Footer + nav */
+.landing-footer {
+  padding: 2.6rem 0;
+  background: var(--bg-canvas);
+}
+
+.landing-footer .landing-brand img.brand-wordmark {
+  width: auto;
+  height: 22px;
+}
+
+.landing-footer .footer-brand img {
+  width: 120px;
+  height: 120px;
+}
+
+.landing-nav {
+  transition: box-shadow 0.3s ease;
+}
+
+.landing-nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.landing-nav-links a::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.landing-nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+.landing-btn,
+.landing-btn-outline,
+.landing-btn-ghost {
+  transition: transform 0.2s ease, background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.landing-btn:hover,
+.landing-btn-outline:hover {
+  transform: translateY(-1px);
+}
+
+.landing-btn:active,
+.landing-btn-outline:active {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-card,
+  .landing-module,
+  .landing-step,
+  .landing-btn,
+  .landing-btn-outline,
+  .landing-faq-sign,
+  .landing-faq-item p {
+    transition: none;
+    animation: none;
+  }
+}

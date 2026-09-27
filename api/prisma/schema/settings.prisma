@@ -1,0 +1,93 @@
+// Per-company configuration. One row per company, every column typed.
+//
+// This replaces the old TenantSetting table, which stored settings as
+// scope/key/value/valueType rows with every value cast to text. That shape
+// forced a runtime string-to-type coercion on every read and made settings
+// impossible to query, default, or validate at the database level.
+//
+// Identity fields that used to live in the "company" settings scope (legal
+// name, tax number, address, phone, email) are now real columns on Company
+// and are edited through the company profile instead of being duplicated here.
+
+enum StockCommitPoint {
+  CONFIRMATION
+  FULFILLMENT
+  SHIPPING
+}
+
+model CompanySettings {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @unique @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // ---------- Accounting ----------
+  fiscalYearStartMonth   Int     @default(1)
+  invoicePrefix          String  @default("INV") @db.VarChar(20)
+  invoiceNextNumber      Int     @default(1)
+  defaultSalesVatRate    Decimal @default(0) @db.Decimal(5, 2)
+  defaultPurchaseVatRate Decimal @default(0) @db.Decimal(5, 2)
+
+  // ---------- Inventory ----------
+  stockCommitPoint         StockCommitPoint @default(CONFIRMATION)
+  allowNegativeStock       Boolean          @default(false)
+  defaultLowStockThreshold Decimal          @default(0) @db.Decimal(18, 2)
+  defaultReorderQuantity   Decimal          @default(0) @db.Decimal(18, 2)
+  enableExpiryTracking     Boolean          @default(false)
+
+  // ---------- Purchases ----------
+  purchaseOrderPrefix     String  @default("PO") @db.VarChar(20)
+  purchaseNextNumber      Int     @default(1)
+  defaultPaymentTermsDays Int     @default(0)
+  requireSupplierInvoice  Boolean @default(false)
+  allowOverReceipt        Boolean @default(false)
+
+  // ---------- Production ----------
+  productionBatchPrefix String @default("BATCH") @db.VarChar(20)
+  productionNextNumber  Int    @default(1)
+
+  // ---------- Sales ----------
+  orderPrefix               String  @default("ORD") @db.VarChar(20)
+  orderNextNumber           Int     @default(1)
+  requireOrderConfirmation  Boolean @default(true)
+  allowManualDiscount       Boolean @default(true)
+  defaultOrderValidityHours Int     @default(48)
+
+  // ---------- Shipping ----------
+  defaultShippingCost   Decimal @default(0) @db.Decimal(18, 2)
+  freeShippingThreshold Decimal @default(0) @db.Decimal(18, 2)
+  returnShippingCost    Decimal @default(0) @db.Decimal(18, 2)
+
+  // ---------- Shipping returns ----------
+  // The return reference counter, alongside the invoice / purchase / batch /
+  // order counters above. It exists so the reference is allocated by an atomic
+  // increment rather than by counting rows — see the create handler in
+  // modules/sales/fulfillment.ts for why that distinction matters.
+  returnPrefix     String @default("RET") @db.VarChar(20)
+  returnNextNumber Int    @default(1)
+
+  // ---------- Onboarding ----------
+  // Whether the first-run setup wizard has been dealt with.
+  //
+  // A company is created fully provisioned (roles, settings, a warehouse, the
+  // standard operation types) — what it does NOT have is the handful of
+  // decisions only the owner can make: what the business actually does, what
+  // it sells, how it ships. The wizard collects those.
+  //
+  // `onboardingCompletedAt` is a timestamp rather than a boolean so we can
+  // answer "when" as well as "whether", and so a future re-onboarding (new
+  // fiscal year, new module) can be distinguished from the first run.
+  //
+  // `onboardingSkippedSteps` records which steps were passed over. Skipping is
+  // a first-class outcome, not a failure: a user who wants to look around
+  // before committing should not be nagged, but knowing WHAT they skipped
+  // lets the UI surface the relevant prompt later instead of asking again
+  // blindly. Stored as a string array — a handful of short slugs.
+  onboardingCompletedAt  DateTime?
+  onboardingSkippedSteps String[]  @default([])
+
+
+  @@map("company_settings")
+}

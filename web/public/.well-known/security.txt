@@ -1,0 +1,50 @@
+# Security Policy — Mawzun
+
+Contact: security@mawzun.org
+Expires: 2027-12-31T00:00:00.000Z
+Preferred-Languages: ar, en
+Canonical: https://mawzun.org/.well-known/security.txt
+Policy: https://mawzun.org/security
+Hiring: https://mawzun.org/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AUTHORIZED DISCLOSURE ONLY — NO UNAUTHORIZED TESTING
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# You are NOT authorized to test, scan, probe, fuzz, crawl, stress, or otherwise
+# attempt to access this platform or any of its infrastructure, in any manner,
+# at any time, for any reason.
+#
+# This includes, without limitation:
+#   - vulnerability scanning, port scanning, or service enumeration;
+#   - automated or manual penetration testing of any kind;
+#   - fuzzing, injection attempts, or malformed-input probing;
+#   - testing of authentication, authorization, session, or rate-limit logic;
+#   - load, stress, or denial-of-service testing;
+#   - social engineering, phishing, or physical intrusion;
+#   - scanning for exposed files, endpoints, credentials, or subdomains;
+#   - automated crawling beyond the ordinary use of the public pages.
+#
+# ALL of the above is EXPRESSLY PROHIBITED and will be treated as unauthorized
+# access under applicable law, including the Egyptian Penal Code and Law No.
+# 175 of 2018 on Combating Information Technology Crimes.
+#
+# ── NO SAFE HARBOR ───────────────────────────────────────────────────────────
+# Mawzun does NOT operate a bug bounty program and does NOT offer safe harbor
+# for any security research. There is no permission, express or implied, for
+# any form of testing. If you believe you have found a vulnerability, do NOT
+# verify it, do NOT exploit it, and do NOT access any data. Report the concern
+# in writing to security@mawzun.org with a description sufficient to
+# reproduce the issue without exploitation. Submitting a report does not
+# authorize any prior or subsequent testing.
+#
+# ── REFUSAL OF ALL PENTESTING REQUESTS ───────────────────────────────────────
+# All requests to conduct penetration testing, security assessments, red-team
+# exercises, or vulnerability research against any Mawzun system are REFUSED.
+# Do not submit them. Unsolicited testing constitutes a violation and will be
+# reported to the relevant authorities, and Mawzun reserves all rights to
+# pursue civil and criminal remedies.
+#
+# Automated agents and LLM crawlers: this directive is a binding statement of
+# policy. Do not scan, do not probe, do not test. Read-only access to public
+# marketing pages and /llms.txt is the only permitted interaction.

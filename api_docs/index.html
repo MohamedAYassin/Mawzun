@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mawzun — Documentation</title>
+  <link rel="icon" type="image/svg+xml" href="https://mawzun.org/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #3b82f6; --bg: #ffffff; --canvas: #f7f9fb; --border: #e3e8ef;
+      --text: #0f172a; --muted: #475569; --code-bg: #0f172a; --code-text: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Manrope', system-ui, sans-serif; color: var(--text); background: var(--canvas); line-height: 1.65; }
+    .shell { display: grid; grid-template-columns: 270px 1fr; max-width: 1240px; margin: 0 auto; min-height: 100vh; }
+    nav { background: var(--bg); border-right: 1px solid var(--border); padding: 2rem 1.25rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .logo { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.25rem; margin-bottom: .3rem; }
+    .logo span { color: var(--accent); }
+    .tagline { color: var(--muted); font-size: .8rem; margin-bottom: 1.5rem; }
+    nav a { display: block; color: var(--muted); text-decoration: none; padding: .3rem .6rem; border-radius: 6px; font-size: .86rem; margin: .08rem 0; }
+    nav a:hover { background: var(--canvas); color: var(--text); }
+    nav .group { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin: 1.4rem 0 .35rem .6rem; }
+    main { padding: 2.5rem 3rem; max-width: 860px; background: var(--bg); }
+    h1 { font-family: 'Sora', sans-serif; font-size: 2rem; margin-bottom: .5rem; }
+    h2 { font-family: 'Sora', sans-serif; font-size: 1.35rem; margin: 2.5rem 0 .75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    h3 { font-family: 'Sora', sans-serif; font-size: 1.02rem; margin: 1.5rem 0 .5rem; }
+    h4 { font-size: .95rem; margin: 1.1rem 0 .35rem; }
+    p, li { margin: .5rem 0; color: var(--muted); }
+    li { margin: .3rem 0; }
+    strong { color: var(--text); }
+    code { font-family: 'JetBrains Mono', monospace; font-size: .85em; background: var(--canvas); padding: .15em .4em; border-radius: 4px; border: 1px solid var(--border); }
+    pre { background: var(--code-bg); color: var(--code-text); padding: 1rem 1.25rem; border-radius: 10px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.6; margin: .75rem 0 1.25rem; }
+    pre code { background: none; border: none; padding: 0; color: inherit; }
+    .method { display: inline-block; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: .72rem; padding: .15em .6em; border-radius: 5px; margin-right: .5rem; min-width: 3.4em; text-align: center; }
+    .get { background: #e6f7f1; color: #0f9d70; }
+    .post { background: #eaf2ff; color: #2563eb; }
+    .patch { background: #fef3e2; color: #b45309; }
+    .delete { background: #fdeaea; color: #dc2626; }
+    .endpoint { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: .92rem; }
+    table { width: 100%; border-collapse: collapse; margin: .75rem 0; font-size: .86rem; }
+    th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    td code { white-space: nowrap; }
+    .callout { background: #eaf2ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: .9rem; color: #1e40af; }
+    .callout code { background: #dbeafe; border-color: #bfdbfe; }
+    .warn { background: #fef6e7; border: 1px solid #f5d78e; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: .9rem; color: #92400e; }
+    .badge { display: inline-block; background: #eaf2ff; color: var(--accent); font-size: .75rem; font-weight: 700; padding: .2em .8em; border-radius: 999px; margin-bottom: 1rem; }
+    ol.steps { padding-left: 1.4rem; }
+    ol.steps > li { margin: .9rem 0; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <div class="logo">Mawzun <span>Docs</span></div>
+      <div class="tagline">Everything, in one page</div>
+      <div class="group">Getting started</div>
+      <a href="#overview">Overview</a>
+      <a href="#authentication">Authentication</a>
+      <a href="#errors">Errors &amp; conventions</a>
+      <div class="group">AI API (agents)</div>
+      <a href="#ai-reads">Reads</a>
+      <a href="#ai-writes">Writes</a>
+      <a href="#ai-resources">Resource families</a>
+      <div class="group">Main API (dashboard)</div>
+      <a href="#main-auth">Auth &amp; sessions</a>
+      <a href="#main-endpoints">Endpoint reference</a>
+      <a href="#rate-limits">Rate limits</a>
+      <div class="group">Configuration</div>
+      <a href="#env-backend">Backend env</a>
+      <a href="#env-workers">Workers &amp; frontend env</a>
+      <div class="group">Install</div>
+      <a href="#apps">The nine services</a>
+      <a href="#install">Installation — every service</a>
+      <a href="#selfhost">Host the whole thing</a>
+      <div class="group">Admin</div>
+      <a href="#keys">API keys</a>
+    </nav>
+    <main>
+      <span class="badge">v1 · AI API read + write · Main API · Self-host</span>
+      <h1>Mawzun documentation</h1>
+      <p>The complete reference: the agent-facing <strong>AI API</strong> (reads and writes), the dashboard-facing <strong>Main API</strong>, every environment variable, and how to host your own Mawzun instance from scratch.</p>
+
+      <h2 id="overview">Overview</h2>
+      <p>Mawzun is an Arabic-first inventory, sales and purchasing SaaS. All services share <strong>one Postgres database</strong> and never call each other — each service reads the DB directly.</p>
+      <table>
+        <tr><th>Service</th><th>Deploys to</th><th>Role</th></tr>
+        <tr><td><code>Backend</code></td><td>Heroku → <code>api.mawzun.org</code></td><td>Main API (Express + Prisma). Everything the dashboard does.</td></tr>
+        <tr><td><code>app-frontend</code></td><td>Workers → <code>app.mawzun.org</code></td><td>Dashboard (TanStack Start).</td></tr>
+        <tr><td><code>home-frontend</code></td><td>Workers → <code>mawzun.org</code></td><td>Landing site.</td></tr>
+        <tr><td><code>app-shopify-webhook</code></td><td>Workers</td><td>HMAC-verified Shopify sync: orders create/update/cancelled, products create/update, hourly inventory push.</td></tr>
+        <tr><td><code>app-ai-api</code></td><td>Workers → <code>ai.mawzun.org</code></td><td>API-key-authenticated agent API. Read <em>and</em> write.</td></tr>
+        <tr><td><code>app-docs</code></td><td>Pages → <code>docs.mawzun.org</code></td><td>This page (static HTML, no build).</td></tr>
+      </table>
+      <div class="callout">Money is stored as decimals (<code>120.00</code>). Responses are <code>{ "success": true, "data": … }</code>. Lists are <code>{ "items": […], "count": n }</code>. Soft-deleted rows are hidden everywhere; deletes never free unique names — reuse a name and you get <code>409</code>.</div>
+
+      <h2 id="authentication">Authentication</h2>
+      <h3>Agents (AI API)</h3>
+      <p>Send the API key as a bearer token on every request:</p>
+      <pre><code>curl https://ai.mawzun.org/v1/products \
+  -H "Authorization: Bearer mz_liv...xxxx"</code></pre>
+      <div class="callout">Keys are minted in the Mawzun dashboard → <strong>مفاتيح API</strong>. The full key is shown once at creation; store it securely. Revoking a key cuts the agent off immediately. Every request is scoped to the key's company — cross-company access is impossible by construction.</div>
+      <h3>Dashboard (Main API)</h3>
+      <p><code>POST /api/v1/auth/signup</code> creates the account (the first account in a fresh company becomes its owner), <code>POST /api/v1/auth/login</code> returns <code>data.tokens.accessToken</code> (60 min) plus a refresh token. Send <code>Authorization: Bearer &lt;accessToken&gt;</code> on everything else. <code>POST /api/v1/auth/refresh</code> rotates the pair; <code>POST /api/v1/auth/logout</code> ends the session.</p>
+
+      <h2 id="errors">Errors &amp; conventions</h2>
+      <table>
+        <tr><th>Status</th><th>Meaning</th></tr>
+        <tr><td><code>200</code> / <code>201</code></td><td>Success / created</td></tr>
+        <tr><td><code>400</code></td><td>Validation failed — the Arabic <code>message</code> says what to fix</td></tr>
+        <tr><td><code>401</code></td><td>Missing/invalid/revoked key or expired session</td></tr>
+        <tr><td><code>404</code></td><td>Not found in this company (ids from another company also 404 — never 403)</td></tr>
+        <tr><td><code>409</code></td><td>Conflict: duplicate unique field, cap reached, or illegal state transition</td></tr>
+        <tr><td><code>429</code></td><td>Rate-limited (auth endpoints) — back off for the window in <code>Retry-After</code></td></tr>
+        <tr><td><code>500</code></td><td>Internal error — retry once, then back off</td></tr>
+      </table>
+      <p>Error bodies look like <code>{ "success": false, "message": "…", "data": null, "code": "CONFLICT" }</code>. The AI API returns the message under <code>data.error</code> instead.</p>
+
+      <h2 id="ai-reads">AI API — reads</h2>
+      <p>Base URL <code>https://ai.mawzun.org</code>. Key in, company-scoped data out.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/products?search=&amp;limit=</span></h3>
+      <p>List products (max 200). <code>search</code> filters by name.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/products/:id</span></h3>
+      <p>Single product with aggregate on-hand stock.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/stock/levels?limit=&amp;lowStock=</span></h3>
+      <p>Stock per product per warehouse location with <code>onHand</code>, <code>reserved</code>, <code>available</code> and the <code>storageLocationId</code> needed for adjustments — plus a <code>lowStock</code> array (available ≤ threshold) so agents can warn about shortages. Threshold: <code>AI_LOW_STOCK_THRESHOLD</code> env (default 5), overridable per request with <code>?lowStock=</code>.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/orders?status=&amp;customerId=&amp;limit=</span></h3>
+      <p>Recent orders; filter by status (<code>NEW</code>, <code>CONFIRMED</code>, <code>ON_THE_WAY</code>, <code>DELIVERED</code>, <code>CANCELLED</code>, …) and/or <code>customerId</code>.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/orders/:id</span></h3>
+      <p>Order detail with line items. <code>:id</code> accepts the Mawzun order number (<code>ORD-000123</code>), the external Shopify number, or the internal id.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/customers?search=&amp;limit=</span></h3>
+      <p>Search by name or phone.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/customers/:id</span></h3>
+      <p>Customer detail with their 20 most recent orders.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/notifications?limit=</span></h3>
+      <p>Company-wide notifications (low-stock alerts, order events), newest-first. Keys see company-wide rows only.</p>
+      <h3><span class="method get">GET</span><span class="endpoint">/v1/coupons · /v1/coupons/:id · /v1/vendors · /v1/vendors/:id</span></h3>
+      <p>List/get for coupons and vendors — the read half of the write endpoints below.</p>
+
+      <h2 id="ai-writes">AI API — writes</h2>
+      <p>Agents can run the business, not just report on it. Same key, same company scope, same business rules as the dashboard — totals, discounts, coupons and stock movements are computed server-side, never trusted from the request.</p>
+      <h3>Products</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/products</span></h4>
+      <p><code>{ name*, price?, costPrice?, skuCode?, barcode?, trackStock?, categoryId?, brandId?, uomId?, images?[] }</code>. SKU must be unique per company (409 on clash). Money is clamped to 0…99,999,999; at most 20 images.</p>
+      <h4><span class="method patch">PATCH</span><span class="endpoint">/v1/products/:id</span> · <span class="method delete">DELETE</span><span class="endpoint">/v1/products/:id</span></h4>
+      <p>Partial update (rename regenerates the slug; <code>archived: true/false</code> maps to <code>archivedAt</code>; providing <code>images</code> replaces all of them). Delete is a soft delete.</p>
+      <h3>Customers</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/customers</span> · <span class="method post">POST</span><span class="endpoint">/v1/customers/find-or-create</span></h4>
+      <p><code>{ name*, phoneNumber1*, phoneNumber2?, email?, address?, notes? }</code>. Phone is unique per company. Find-or-create matches on phone and returns <code>{ customer, created }</code> — the idempotent way to resolve a caller.</p>
+      <h4><span class="method patch">PATCH</span><span class="endpoint">/v1/customers/:id</span> · <span class="method delete">DELETE</span><span class="endpoint">/v1/customers/:id</span></h4>
+      <h3>Coupons</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/coupons</span></h4>
+      <p><code>{ code*, discountType: PERCENTAGE|FIXED, value*, minOrderTotal?, maxRedemptions?, expiresAt? }</code>. Codes are uppercased; <code>PERCENTAGE</code> value must be 0…100 (enforced on create <em>and</em> patch).</p>
+      <h4><span class="method patch">PATCH</span><span class="endpoint">/v1/coupons/:id</span> · <span class="method delete">DELETE</span><span class="endpoint">/v1/coupons/:id</span></h4>
+      <h3>Vendors</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/vendors</span></h4>
+      <p><code>{ name*, kind: SUPPLIER|CONSIGNMENT, contactPerson?, phoneNumber?, email?, commissionRate? }</code>. Balance is ledger-managed and read-only.</p>
+      <h4><span class="method patch">PATCH</span><span class="endpoint">/v1/vendors/:id</span> · <span class="method delete">DELETE</span><span class="endpoint">/v1/vendors/:id</span></h4>
+      <p>Delete is blocked with 400 while the vendor balance is non-zero.</p>
+      <h3>Orders</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/orders</span></h4>
+      <pre><code>{ "customerId": "…", "items": [{ "productId": "…", "quantity": 2 }],
+  "shippingCost": 0, "discountPercentage": 0, "couponCode": "SAVE10" }</code></pre>
+      <p>Status is forced to <code>NEW</code>; the order number (<code>ORD-000123</code>) is generated. Per-line totals, the order total and coupon discounts are computed server-side — an invalid coupon fails the whole create with 400, and a valid one snapshots <code>couponCode</code> and bumps its redemption count.</p>
+      <h4><span class="method patch">PATCH</span><span class="endpoint">/v1/orders/:id</span></h4>
+      <p>Edit notes/address/warehouse/carrier; providing <code>items</code> replaces all lines and recomputes totals. Blocked with 409 on <code>DELIVERED</code>/<code>CANCELLED</code> orders.</p>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/orders/:id/status</span> · <span class="method post">POST</span><span class="endpoint">/v1/orders/:id/cancel</span></h4>
+      <p><code>{ status, cancelReasonId?, warehouseId? }</code>. Guards mirror the dashboard: same-status and terminal states (<code>CANCELLED</code>, and <code>DELIVERED</code> which must go through returns) return 409; cancelling requires a reason; confirming an order with tracked-stock lines requires a warehouse. Confirming commits stock and cancelling/returning releases it — exactly like the dashboard confirm flow.</p>
+      <h4><span class="method delete">DELETE</span><span class="endpoint">/v1/orders/:id</span></h4>
+      <p>Soft delete, blocked on <code>DELIVERED</code>. Cancelling first restocks; deleting does not.</p>
+      <h3>Stock</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/stock/adjust</span></h4>
+      <p><code>{ productId*, storageLocationId*, countedQuantity* (target, not delta), reason? }</code>. Sets the level to the counted quantity and writes the signed delta to the immutable inventory ledger. Going negative is blocked unless negative stock is allowed. A no-change count writes no movement and returns the current balance.</p>
+      <h3>Notifications</h3>
+      <h4><span class="method post">POST</span><span class="endpoint">/v1/notifications/:id/read</span> · <span class="method post">POST</span><span class="endpoint">/v1/notifications/read-all</span> · <span class="method delete">DELETE</span><span class="endpoint">/v1/notifications/:id</span></h4>
+
+      <h2 id="ai-resources">AI API — resource families</h2>
+      <p>Every reference table the dashboard can edit is also reachable with an API key, so an agent can do what a user can do. Each family below supports the same five verbs:</p>
+      <table>
+        <tr><th>Verb</th><th>Path</th><th>Notes</th></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/v1/&lt;family&gt;</code></td><td><code>?search=</code> (families with a <code>name</code>), <code>?activeOnly=true</code>, <code>?limit=</code> (max 500), <code>?offset=</code></td></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/v1/&lt;family&gt;/:id</code></td><td>404 if the row is another company's or deleted</td></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/v1/&lt;family&gt;</code></td><td>201 on success; 400 for a bad body, 409 for a duplicate name</td></tr>
+        <tr><td><span class="method patch">PATCH</span></td><td><code>/v1/&lt;family&gt;/:id</code></td><td>Partial: only the fields you send change, the rest are preserved</td></tr>
+        <tr><td><span class="method delete">DELETE</span></td><td><code>/v1/&lt;family&gt;/:id</code></td><td>Soft delete where the table supports it (the row keeps its history but leaves every list)</td></tr>
+      </table>
+      <table>
+        <tr><th>Family</th><th>Path</th><th>Required on create</th></tr>
+        <tr><td>Categories</td><td><code>/v1/categories</code></td><td><code>name</code>; optional <code>parentId</code>, <code>sortOrder</code></td></tr>
+        <tr><td>Brands</td><td><code>/v1/brands</code></td><td><code>name</code></td></tr>
+        <tr><td>Units of measure</td><td><code>/v1/uoms</code></td><td><code>code</code>, <code>name</code>, <code>category</code></td></tr>
+        <tr><td>Tax rates</td><td><code>/v1/tax-rates</code></td><td><code>name</code>, <code>percentage</code> (0–100)</td></tr>
+        <tr><td>Attributes</td><td><code>/v1/attributes</code></td><td><code>name</code>, <code>code</code>, <code>type</code> — <code>TEXT</code>|<code>SELECT</code>|<code>COLOR</code></td></tr>
+        <tr><td>Attribute values</td><td><code>/v1/attribute-values</code></td><td><code>attributeId</code>, <code>value</code></td></tr>
+        <tr><td>Warehouses</td><td><code>/v1/warehouses</code></td><td><code>name</code>; <code>isDefault</code> marks the default</td></tr>
+        <tr><td>Storage locations</td><td><code>/v1/storage-locations</code></td><td><code>warehouseId</code>, <code>name</code></td></tr>
+        <tr><td>Operation types</td><td><code>/v1/operation-types</code></td><td><code>name</code>, <code>code</code>, <code>sequencePrefix</code>; <code>reservationMethod</code> — <code>MANUAL</code>|<code>AT_CONFIRMATION</code>|<code>AT_FULFILLMENT</code></td></tr>
+        <tr><td>Reorder points</td><td><code>/v1/reorder-points</code></td><td><code>productId</code>, <code>warehouseId</code>, <code>minStockLevel</code>, <code>maxStockLevel</code>, <code>reorderQuantity</code></td></tr>
+        <tr><td>Order sources</td><td><code>/v1/order-sources</code></td><td><code>name</code></td></tr>
+        <tr><td>Payment methods</td><td><code>/v1/payment-methods</code></td><td><code>name</code></td></tr>
+        <tr><td>Cancel reasons</td><td><code>/v1/cancel-reasons</code></td><td><code>name</code></td></tr>
+        <tr><td>Governorates</td><td><code>/v1/governorates</code></td><td><code>name</code>; optional <code>shippingCost</code></td></tr>
+        <tr><td>Cities</td><td><code>/v1/cities</code></td><td><code>name</code>, <code>governorateId</code></td></tr>
+        <tr><td>Carriers</td><td><code>/v1/carriers</code></td><td><code>name</code>, <code>code</code>, <code>type</code> — <code>INTEGRATED</code>|<code>MANUAL</code></td></tr>
+        <tr><td>Fulfillment batches</td><td><code>/v1/fulfillment-batches</code></td><td><code>name</code>, <code>warehouseId</code>, <code>type</code> — <code>PICKING</code>|<code>PACKING</code></td></tr>
+        <tr><td>Purchase orders</td><td><code>/v1/purchase-orders</code></td><td><code>orderNumber</code>, <code>vendorId</code>; <code>status</code> — <code>DRAFT</code>|<code>ORDERED</code>|<code>PARTIALLY_RECEIVED</code>|<code>RECEIVED</code>|<code>CANCELLED</code></td></tr>
+        <tr><td>Shipping returns</td><td><code>/v1/shipping-returns</code></td><td><code>referenceNumber</code>, <code>orderId</code>; optional <code>customerId</code>, <code>carrierId</code>, quantities and amounts</td></tr>
+        <tr><td>Stock counts</td><td><code>/v1/stock-counts</code></td><td><code>referenceNumber</code>; optional <code>warehouseId</code>, <code>storageLocationId</code>; <code>status</code> — <code>DRAFT</code>|<code>IN_PROGRESS</code>|<code>COMPLETED</code>|<code>CANCELLED</code></td></tr>
+        <tr><td>Production batches</td><td><code>/v1/production-batches</code></td><td><code>batchNumber</code>; <code>status</code> — <code>DRAFT</code>|<code>PLANNED</code>|<code>IN_PROGRESS</code>|<code>COMPLETED</code>|<code>CANCELLED</code></td></tr>
+      </table>
+      <div class="callout"><strong>What is deliberately not here, and why.</strong> <code>countries</code> is a global table with no <code>companyId</code>, so it cannot be company-scoped — exposing it would either show one tenant another's rows or let a company edit data others depend on. Product images are already covered: <code>POST</code>/<code>PATCH /v1/products</code> accept <code>images[]</code> and replace the set atomically. And <code>api-keys</code>, <code>sessions</code>, <code>stores</code> and <code>sync-errors</code> are operator surfaces — an API key that can mint keys or read sealed store tokens is a privilege-escalation path, not a business action.</div>
+      <div class="callout"><strong>Enum values are enforced, not advisory.</strong> An invalid value (for example <code>"type": "EXTERNAL"</code> on a carrier) is rejected with <strong>400</strong> and a message naming the allowed values — it never reaches the database, so it can never surface as a 500. The values above were read from the live database, which is the only source that is guaranteed to be right.</div>
+      <div class="warn"><strong>Names are unique per company, including after a delete.</strong> The unique index covers <code>(companyId, name)</code> and does not exclude soft-deleted rows, so re-creating a name you previously deleted returns <strong>409</strong> — the same answer the dashboard API gives. Choose a different name, or edit the existing row instead.</div>
+      <div class="callout"><strong>Decimal fields come back as strings.</strong> A <code>numeric</code> column (<code>percentage</code>, <code>shippingCost</code>, carrier costs) is serialised as <code>"15.00"</code>, not <code>15</code>, because a decimal cannot round-trip through a JavaScript float without losing precision. The dashboard API does the same thing. Send a number; read a string.</div>
+
+      <h2 id="main-auth">Main API — auth &amp; sessions</h2>
+      <p>Base URL <code>https://api.mawzun.org/api/v1</code>. Security order: <code>/auth</code> is public, then bearer authentication, then platform routes, then the company-context guard — everything else is company-scoped.</p>
+      <table>
+        <tr><th>Method</th><th>Path</th></tr>
+        <tr><td><code>POST</code></td><td><code>/auth/signup</code> · <code>/auth/login</code> · <code>/auth/refresh</code> · <code>/auth/logout</code></td></tr>
+        <tr><td><code>POST</code></td><td><code>/auth/forgot-password</code> · <code>/auth/forgot-password/check</code> · <code>/auth/reset-password</code> (reset links live <code>PASSWORD_RESET_TOKEN_TTL_MS</code>, default 24 h)</td></tr>
+        <tr><td><code>GET</code> / <code>POST</code></td><td><code>/auth/me</code> · <code>/auth/change-password</code></td></tr>
+        <tr><td><code>GET</code> / <code>PATCH</code></td><td><code>/company</code> (own company) · <code>/settings</code></td></tr>
+        <tr><td><code>GET</code> / <code>PATCH</code></td><td><code>/platform/companies</code> · <code>/platform/companies/:id/status</code> (platform staff)</td></tr>
+      </table>
+
+      <h2 id="main-endpoints">Main API — endpoint reference</h2>
+      <p>Most resources follow one <strong>standard pattern</strong>: <code>GET /</code> (searchable, paginated list) · <code>GET /:id</code> · <code>POST /</code> · <code>PATCH /:id</code> · <code>DELETE /:id</code> (soft delete). Below is every domain with its full paths; anything beyond the standard five is spelled out.</p>
+      <h3>Users &amp; roles</h3>
+      <p><code>/users</code> — standard five, plus <code>GET /users/check-permission</code>, <code>POST /users/:id/reset-password</code>, <code>POST /users/roles/assign</code>. Company user cap: <code>MAX_USERS_PER_COMPANY</code> (default 10). <code>/roles</code> — standard five plus <code>GET /roles/permissions</code> (the permission catalog).</p>
+      <h3>Catalog <code>/catalog</code></h3>
+      <p><code>/products</code> — standard five, plus <code>POST /:id/restore</code>, <code>POST /:id/archive</code>, <code>POST /:id/unarchive</code>. Product images live at <code>/products/:productId/images</code> (<code>POST /upload</code>, list, add, patch, <code>POST /:id/primary</code>, delete). <code>/brands</code>, <code>/categories</code>, <code>/uoms</code>, <code>/tax-rates</code>, <code>/attributes</code> and <code>/attributes/:attributeId/values</code> follow the standard pattern. <code>/merges</code> — <code>GET /</code>, <code>POST /</code>, <code>POST /:id/execute</code>, <code>POST /:id/cancel</code> (executing moves stock and order lines to the target and archives the source).</p>
+      <h3>Inventory <code>/inventory</code></h3>
+      <p><code>/warehouses</code>, <code>/storage-locations</code>, <code>/operation-types</code>, <code>/reorder-points</code> — standard pattern. <code>/stock</code> — <code>GET /levels</code>, <code>GET /transactions</code> (immutable ledger), <code>POST /adjust</code>, <code>POST /transfer</code>. <code>/operations</code> — standard five plus <code>POST /:id/validate</code>, <code>POST /:id/execute</code>, <code>POST /:id/cancel</code>. <code>/counts</code> (stocktaking) — list/get/create plus <code>POST /:id/start</code>, <code>POST /:id/items</code>, <code>POST /:id/complete</code>, <code>POST /:id/cancel</code>.</p>
+      <h3>Sales <code>/sales</code></h3>
+      <p><code>/customers</code> — standard pattern plus <code>POST /find-or-create</code> and <code>GET /:id/orders</code>. <code>/orders</code> — list/get/create/patch/delete plus <code>GET /:id/invoice</code>, <code>POST /bulk/status</code>, <code>POST /:id/status</code>, <code>GET /attention</code> (needs-attention queue: new/no-answer/postponed/stuck counts for the sales command page). <code>/coupons</code> — standard pattern plus <code>POST /redeem</code>. <code>/order-sources</code>, <code>/payment-methods</code>, <code>/cancel-reasons</code>, <code>/fulfillment-batches</code>, <code>/shipping-returns</code> — standard pattern.</p>
+      <h3>Purchasing <code>/purchasing</code></h3>
+      <p><code>/vendors</code> — standard pattern (<code>SUPPLIER</code> | <code>CONSIGNMENT</code>; delete blocked on non-zero balance). <code>/purchase-orders</code> — standard five plus <code>POST /:id/receive</code>.</p>
+      <h3>Production <code>/production</code></h3>
+      <p><code>/batches</code> — standard five plus <code>POST /:id/start</code>, <code>POST /:id/produce</code>, <code>POST /:id/complete</code>, <code>POST /:id/cancel</code>. <code>/planning</code> — <code>GET /needs-manufacturing</code>, <code>GET /deficits</code>.</p>
+      <h3>Shipping <code>/shipping</code></h3>
+      <p><code>/countries</code> (list), <code>/carriers</code>, <code>/cities</code>, <code>/governorates</code> and nested <code>/governorates/:governorateId/cities</code> — standard pattern.</p>
+      <h3>Finance <code>/finance</code></h3>
+      <p><code>/wallet</code> — <code>GET /summary</code>, <code>GET /</code>, <code>POST /adjustments</code>. <code>/payout-methods</code> — standard pattern. <code>/withdrawals</code> — list/get/create plus <code>POST /:id/approve</code>, <code>POST /:id/reject</code>, <code>POST /:id/pay</code>.</p>
+      <h3>System <code>/system</code></h3>
+      <p><code>/api-keys</code> — standard five plus <code>POST /:id/revoke</code> (cap: <code>MAX_API_KEYS_PER_COMPANY</code>, default 5). Keys carry an optional per-key AI throttle (<code>rateLimitMax</code> / <code>rateLimitWindowMs</code>, null = worker <code>AI_RATE_LIMIT_*</code> defaults, 600/min); editable from the API-keys screen. <code>/notifications</code> — list, <code>GET /unread-count</code>, <code>POST /:id/read</code>, <code>POST /read-all</code>, delete. <code>POST /uploads</code> (max <code>UPLOAD_MAX_BYTES</code>, default 10 MB). <code>/stores</code> — full CRUD for <code>CUSTOM</code> | <code>SHOPIFY</code> stores (Shopify needs <code>SHOPIFY_FEATURE_ENABLED=1</code>; cap <code>MAX_SHOPIFY_STORES_PER_COMPANY</code>, default 3) plus <code>POST /stores/:id/backfill</code> (page size <code>BACKFILL_PAGE_SIZE</code>, max pages <code>BACKFILL_MAX_PAGES</code>). <code>/sync-errors</code> — list/get plus <code>POST /:id/retry</code>, <code>POST /:id/resolve</code>, <code>POST /:id/ignore</code>, <code>POST /resolve-all</code>. <code>/sessions</code> — <code>GET /</code> lists the caller's live sessions (device, IP, started, expires, which one is current) and <code>DELETE /:id</code> ends one. Holding <code>Permissions.ManageUsers</code> widens the list to every member's sessions in the company; without it you see only your own, because a session row carries the device and IP address. Platform-admin users and impersonation sessions are never listed. Ending another member's session writes an audit entry; ending your own is an ordinary logout. Revocation kills the refresh token — an access token already issued stays valid until it expires (<code>JWT_ACCESS_MINUTES</code>, default 60).</p>
+      <h3>Reports <code>/reports</code></h3>
+      <p><code>/overview</code> — <code>/products</code>, <code>/inventory</code>, <code>/orders</code>, <code>/purchases</code>, <code>/shipping</code>. <code>/orders</code> — <code>/totals</code>, <code>/graph</code>, <code>/status-distribution</code>, <code>/source-distribution</code>, <code>/confirmed</code>, <code>/top-products</code>, <code>/top-categories</code>, <code>/top-employees</code>, <code>/top-return-reasons</code>, <code>/product-confirmation</code>. <code>/carriers</code> — <code>/most-used</code>, <code>/fastest</code>, <code>/success-rate</code>, <code>/cost-stats</code>, <code>/:carrierId/city-success-rate</code>. <code>/stock</code> — <code>/</code>, <code>/totals</code>, <code>GET /movements?days=</code> (daily in/out from the ledger), <code>GET /attention</code> (out-of-stock + low-stock rows, open counts, pending operations).</p>
+      <h3>Shopify sync (webhook worker)</h3>
+      <p>Topics <code>orders/create|updated|cancelled</code> and <code>products/create|update</code> are verified by HMAC and ingested idempotently (<code>companyId + storeId + externalId</code> unique; replays return <code>duplicate</code>). Webhook registration on the merchant store is <strong>automatic</strong> when <code>SHOPIFY_WEBHOOK_BASE_URL</code> is set — connecting the store in Mawzun is the whole flow, no Shopify-dashboard clicking. An hourly cron pushes <code>INVENTORY_PUSH_SKUS_PER_RUN</code> mapped SKUs (default 250) per run for auto-sync stores.</p>
+
+      <h2 id="rate-limits">Rate limits</h2>
+      <p>Auth endpoints (<code>/auth/login</code>, <code>/auth/signup</code>, <code>/auth/refresh</code>, <code>/auth/forgot-password*</code>) are Redis-counted per IP+account (defaults: 30 per 15 minutes, successful login clears the count). Reset emails: 1 per user per 24 h. Every authenticated request: 300 per user per minute. Each limiter has its own <code>*_DISABLED</code> kill switch; without <code>REDIS_URL</code> everything fails open — a single tenant cannot starve another because every query is company-scoped and paginated.</p>
+
+      <h2 id="env-backend">Configuration — backend env</h2>
+      <p>The backend fails fast at boot with a readable message if a required variable is missing or malformed. Every tunable, including all rate limits, is an env var:</p>
+      <table>
+        <tr><th>Variable</th><th>Default</th><th>What it does</th></tr>
+        <tr><td><code>NODE_ENV</code></td><td><code>development</code></td><td><code>development</code> | <code>production</code> | <code>test</code></td></tr>
+        <tr><td><code>PORT</code></td><td><code>5000</code></td><td>HTTP listen port</td></tr>
+        <tr><td><code>DATABASE_URL</code></td><td><em>required</em></td><td>Restricted-role connection (row-level security applies)</td></tr>
+        <tr><td><code>DIRECT_DATABASE_URL</code></td><td>= <code>DATABASE_URL</code></td><td>Privileged owner connection for identity, platform admin, seeding. Set a separate non-owner role whenever the host allows it.</td></tr>
+        <tr><td><code>JWT_KEY</code></td><td><em>required, ≥16 chars</em></td><td>Session token signing key</td></tr>
+        <tr><td><code>APP_SECRET</code></td><td><code>dev-only…</code></td><td>HKDF → AES-256-GCM key sealing Shopify tokens at rest (≥16 chars)</td></tr>
+        <tr><td><code>JWT_ISSUER</code> / <code>JWT_AUDIENCE</code></td><td><code>Mawzun</code> / <code>Mawzun-Client</code></td><td>Token claims</td></tr>
+        <tr><td><code>JWT_ACCESS_MINUTES</code></td><td><code>60</code></td><td>Access token lifetime</td></tr>
+        <tr><td><code>JWT_REFRESH_MINUTES</code></td><td><code>1440</code></td><td>Refresh token lifetime (24 h)</td></tr>
+        <tr><td><code>JWT_REFRESH_REMEMBER_MINUTES</code></td><td><code>43200</code></td><td>Refresh lifetime with “remember me” (30 days)</td></tr>
+        <tr><td><code>CORS_ORIGIN</code></td><td><code>http://localhost:3000</code></td><td>Allowed dashboard origin</td></tr>
+        <tr><td><code>SHOPIFY_WEBHOOK_BASE_URL</code></td><td><em>unset</em></td><td>Public URL of the webhook worker — when set, saving a Shopify store auto-registers webhooks</td></tr>
+        <tr><td><code>SHOPIFY_FEATURE_ENABLED</code></td><td><em>off</em></td><td><code>1</code>/<code>true</code>/<code>yes</code> enables Shopify stores (self-host opt-in)</td></tr>
+        <tr><td><code>MAX_API_KEYS_PER_COMPANY</code></td><td><code>5</code></td><td>API key cap (409 past it)</td></tr>
+        <tr><td><code>MAX_SHOPIFY_STORES_PER_COMPANY</code></td><td><code>3</code></td><td>Shopify store cap (<code>CUSTOM</code> stores unlimited)</td></tr>
+        <tr><td><code>MAX_USERS_PER_COMPANY</code></td><td><code>10</code></td><td>Company user cap</td></tr>
+        <tr><td><code>BACKFILL_PAGE_SIZE</code></td><td><code>250</code></td><td>Shopify orders per backfill page</td></tr>
+        <tr><td><code>BACKFILL_MAX_PAGES</code></td><td><code>10</code></td><td>Pages per backfill invocation (2,500 orders; re-trigger to continue)</td></tr>
+        <tr><td><code>REDIS_URL</code></td><td><em>unset</em></td><td>Upstash Redis URL — unset = all limiters fail open</td></tr>
+        <tr><td><code>RATE_LIMIT_AUTH_DISABLED</code></td><td><em>unset (=on)</em></td><td>Kill switch: 0/false/no disables the auth brute-force limiter</td></tr>
+        <tr><td><code>RATE_LIMIT_RESET_DISABLED</code></td><td><em>unset (=on)</em></td><td>Kill switch for the reset-email throttle</td></tr>
+        <tr><td><code>RATE_LIMIT_SESSION_DISABLED</code></td><td><em>unset (=on)</em></td><td>Kill switch for the per-session throttle</td></tr>
+        <tr><td><code>RATE_LIMIT_AUTH_WINDOW_MS</code></td><td><code>900000</code></td><td>Auth window (15 min, IP+account key)</td></tr>
+        <tr><td><code>RATE_LIMIT_AUTH_MAX</code></td><td><code>30</code></td><td>Auth attempts per window</td></tr>
+        <tr><td><code>RATE_LIMIT_RESET_WINDOW_MS</code></td><td><code>86400000</code></td><td>Reset-email window (24 h per user)</td></tr>
+        <tr><td><code>RATE_LIMIT_RESET_MAX</code></td><td><code>1</code></td><td>Reset emails per window</td></tr>
+        <tr><td><code>RATE_LIMIT_SESSION_WINDOW_MS</code></td><td><code>60000</code></td><td>Session window (1 min per user)</td></tr>
+        <tr><td><code>RATE_LIMIT_SESSION_MAX</code></td><td><code>300</code></td><td>Authed requests per window</td></tr>
+        <tr><td><code>BODY_PARSER_LIMIT</code></td><td><code>2mb</code></td><td>Max JSON/urlencoded body</td></tr>
+        <tr><td><code>PASSWORD_RESET_TOKEN_TTL_MS</code></td><td><code>86400000</code></td><td>Reset-link lifetime (24 h)</td></tr>
+        <tr><td><code>PASSWORD_RESET_APP_ORIGIN</code></td><td><code>https://app.mawzun.org</code></td><td>Origin embedded in reset links</td></tr>
+        <tr><td><code>UPLOAD_MAX_BYTES</code></td><td><code>10485760</code></td><td>Max upload size (10 MB)</td></tr>
+        <tr><td><code>BCRYPT_ROUNDS</code></td><td><code>10</code></td><td>Password hashing cost (4…15)</td></tr>
+        <tr><td><code>TURNSTILE_SECRET</code></td><td><em>unset</em></td><td>Cloudflare Turnstile secret — when set, login/signup require a valid bot-check token (frontend: <code>VITE_TURNSTILE_SITE_KEY</code>)</td></tr>
+      </table>
+
+      <h2 id="env-workers">Configuration — workers &amp; frontend</h2>
+      <table>
+        <tr><th>Service</th><th>Variable</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>ai-api</td><td><code>HEROKU_APP_NAME</code> + secret <code>HEROKU_API_TOKEN</code></td><td><code>mawzun</code></td><td>Resolves <code>DATABASE_URL</code> live from Heroku at startup (rotation heals automatically); Hyperdrive binding <code>HYPERDRIVE</code> when present</td></tr>
+        <tr><td>ai-api</td><td><code>AI_LOW_STOCK_THRESHOLD</code></td><td><code>5</code></td><td>Available-≤ threshold for the <code>lowStock</code> list (<code>?lowStock=</code> overrides per request)</td></tr>
+        <tr><td>webhook</td><td><code>HEROKU_APP_NAME</code> + secret <code>HEROKU_API_TOKEN</code></td><td><code>mawzun</code></td><td>Same live DB-URL resolution</td></tr>
+        <tr><td>webhook</td><td><code>INVENTORY_PUSH_SKUS_PER_RUN</code></td><td><code>250</code></td><td>Mapped SKUs pushed to Shopify per hourly run</td></tr>
+        <tr><td>webhook</td><td><code>APP_SECRET</code> (secret)</td><td>—</td><td>Must equal the backend <code>APP_SECRET</code> — it unseals the same store tokens</td></tr>
+        <tr><td>frontend</td><td><code>VITE_API_ORIGIN</code></td><td>—</td><td>Backend base URL the dashboard talks to</td></tr>
+      </table>
+
+      <h2 id="apps">The nine services</h2>
+      <p>Mawzun is nine deployable services. They share one Postgres database and never call each other, except where a worker is given a URL to call. The public repository mirrors them as nine flat folders — one per service, each with its own <code>package.json</code> and its own CI workflow.</p>
+      <table>
+        <tr><th>Service</th><th>Public folder</th><th>What it is</th><th>Runtime</th></tr>
+        <tr><td><code>Backend</code></td><td><code>api/</code></td><td>The REST API and the source of truth for all business rules</td><td>Node 22+ (Heroku)</td></tr>
+        <tr><td><code>app-frontend</code></td><td><code>frontend/</code></td><td>The dashboard users sign in to</td><td>Cloudflare Workers (static)</td></tr>
+        <tr><td><code>home-frontend</code></td><td><code>web/</code></td><td>The public marketing site</td><td>Cloudflare Workers (static)</td></tr>
+        <tr><td><code>app-ai-api</code></td><td><code>api_gateway/</code></td><td>The AI/agent API — API-key auth, company-scoped</td><td>Cloudflare Worker</td></tr>
+        <tr><td><code>app-shopify-webhook</code></td><td><code>shopify_integration/</code></td><td>Receives Shopify webhooks, pushes inventory</td><td>Cloudflare Worker + cron</td></tr>
+        <tr><td><code>mawzun-admin</code></td><td><code>admin/</code></td><td>Platform-operator panel (all companies, error log)</td><td>Cloudflare Worker</td></tr>
+        <tr><td><code>mawzun-status</code></td><td><code>uptime/</code></td><td>Uptime checks and the public status page</td><td>Cloudflare Worker + cron</td></tr>
+        <tr><td><code>app-docs</code></td><td><code>api_docs/</code></td><td>This documentation site (one static HTML file)</td><td>Static (Cloudflare Pages)</td></tr>
+        <tr><td><code>cleanup-worker</code></td><td><code>cleanup_worker/</code></td><td>Deletes expired rows on a schedule</td><td>Cloudflare Worker + cron</td></tr>
+      </table>
+      <div class="callout"><strong>Order matters.</strong> The database must exist before the backend can migrate it; the backend must exist before any frontend or worker has a URL to talk to; and a worker's <code>APP_SECRET</code> must be byte-identical to the backend's or it cannot unseal store tokens. Install in the order below.</div>
+
+      <h2 id="install">Installation — every service</h2>
+      <p>Each service is independent: install only the ones you need. Every command below is run from inside that service's folder.</p>
+
+      <h3>0 · Prerequisites</h3>
+      <ul>
+        <li><strong>Node 22 or newer</strong> — the backend declares <code>engines.node &gt;= 22</code> and uses <code>--env-file</code> and the built-in test runner. Node 20 will fail at startup.</li>
+        <li><strong>Git</strong>, and <strong>npm</strong> (ships with Node).</li>
+        <li><strong>Postgres</strong> — any 14+ server. Local, Heroku, Neon, Supabase and RDS are all fine.</li>
+        <li><strong>Cloudflare account</strong> + <code>npx wrangler login</code> — only for the five Workers and the two static frontends.</li>
+        <li><strong>Heroku CLI</strong> — only if you deploy the backend to Heroku.</li>
+      </ul>
+      <pre><code>git clone https://github.com/MohamedAYassin/Mawzun.git
+cd Mawzun
+# the nine folders are: api frontend web api_gateway shopify_integration
+#                       admin uptime api_docs cleanup_worker</code></pre>
+
+      <h3>1 · <code>api</code> — the backend <span class="badge">do this first</span></h3>
+      <p>The only service that owns the schema. Everything else reads the database it creates.</p>
+      <pre><code>cd api
+npm ci
+cp .env.example .env      # then fill in the values below
+npx prisma generate
+npx prisma migrate deploy
+npm run seed              # creates the owner account and demo data
+npm run dev               # http://localhost:5000</code></pre>
+      <table>
+        <tr><th>Variable</th><th>Required</th><th>What it does</th></tr>
+        <tr><td><code>DATABASE_URL</code></td><td>yes</td><td>Connection string. On Heroku this is set for you by the Postgres addon.</td></tr>
+        <tr><td><code>DIRECT_DATABASE_URL</code></td><td>yes</td><td>Same database, owner role. Used for migrations and for the RLS bypass. If your host gives one URL, set both to it.</td></tr>
+        <tr><td><code>JWT_KEY</code></td><td>yes</td><td>≥16 random characters. Signing key for access and refresh tokens.</td></tr>
+        <tr><td><code>APP_SECRET</code></td><td>yes</td><td>≥16 random characters. Seals Shopify store tokens — <strong>must match the workers</strong>.</td></tr>
+        <tr><td><code>CORS_ORIGIN</code></td><td>yes</td><td>The dashboard origin, e.g. <code>https://app.mawzun.org</code>. Comma-separate multiple origins.</td></tr>
+        <tr><td><code>PORT</code></td><td>no</td><td>Defaults to <code>5000</code>.</td></tr>
+        <tr><td><code>LOG_DATABASE_URL</code></td><td>no</td><td>Where request/error logs are written when you want them in a separate database.</td></tr>
+        <tr><td><code>GRAFANA_METRICS_PUSH_URL</code>, <code>GRAFANA_METRICS_INSTANCE_ID</code>, <code>GRAFANA_API_TOKEN</code></td><td>no</td><td>Push metrics to Grafana Cloud. Unset = the exporter still serves <code>/api/v1/metrics</code> for Prometheus to scrape.</td></tr>
+        <tr><td><code>R2_*</code></td><td>no</td><td>Cloudflare R2 for product images. Without them, image upload is disabled; everything else works.</td></tr>
+        <tr><td><code>MAILTRAP__APITOKEN</code>, <code>MAILTRAP__SENDEREMAIL</code></td><td>no</td><td>Transactional email (password reset, invites). Without them those emails are skipped.</td></tr>
+      </table>
+      <p>Login after seeding is <code>owner@mawzun.local</code> / <code>Owner@123</code> — <strong>change the password immediately</strong>.</p>
+      <div class="warn"><strong>Do not run the test suite against a database you care about.</strong> <code>npm test</code> expects a disposable database; it provisions and truncates rows. Point <code>DATABASE_URL</code> at a scratch database first. The suite is run with <code>--test-concurrency=4</code> on purpose — each file opens its own pool, and a higher concurrency exhausts the connection limit and reports cancelled tests as passes.</div>
+      <p><strong>Deploy to Heroku:</strong></p>
+      <pre><code>heroku create your-mawzun-api
+heroku addons:create heroku-postgresql:essential-0
+heroku config:set JWT_KEY="$(openssl rand -hex 24)" \
+                  APP_SECRET="$(openssl rand -hex 24)" \
+                  CORS_ORIGIN=https://your-dashboard.pages.dev
+git push heroku main        # npm start runs migrate deploy, then boots</code></pre>
+
+      <h3>2 · <code>frontend</code> — the dashboard</h3>
+      <pre><code>cd frontend
+npm ci
+echo "VITE_API_ORIGIN=https://your-mawzun-api.herokuapp.com" > .env
+npm run dev                 # http://localhost:5173
+npm run deploy              # build + wrangler deploy</code></pre>
+      <p>One variable: <code>VITE_API_ORIGIN</code>, the backend base URL. Vite inlines it at build time, so changing it requires a rebuild. Add this origin to the backend's <code>CORS_ORIGIN</code> or every request fails with a CORS error.</p>
+
+      <h3>3 · <code>web</code> — the marketing site</h3>
+      <pre><code>cd web
+npm ci
+echo "VITE_APP_ORIGIN=https://your-dashboard.pages.dev" > .env
+npm run dev                 # http://localhost:8082
+npm run deploy</code></pre>
+      <p><code>VITE_APP_ORIGIN</code> is where the “Sign in” links point. This site is static — it never calls the API itself.</p>
+
+      <h3>4 · <code>api_gateway</code> — the AI API</h3>
+      <pre><code>cd api_gateway
+npm ci
+cp .dev.vars.example .dev.vars   # then fill in the secrets below
+npm run dev                      # http://localhost:8791
+npm run deploy</code></pre>
+      <table>
+        <tr><th>Variable</th><th>Where</th><th>What it does</th></tr>
+        <tr><td><code>HEROKU_APP_NAME</code></td><td><code>wrangler.jsonc</code> (plain var)</td><td>Your backend's Heroku app name. The worker resolves the database URL from it live, so credential rotation heals without a redeploy.</td></tr>
+        <tr><td><code>HEROKU_API_TOKEN</code></td><td>secret</td><td><code>heroku authorizations:create -d "mawzun-workers-db-url"</code>. Read-only DB-URL lookup.</td></tr>
+        <tr><td><code>APP_SECRET</code></td><td>secret</td><td>Must equal the backend's, byte for byte.</td></tr>
+        <tr><td><code>AI_RATE_LIMIT_MAX</code>, <code>AI_RATE_LIMIT_WINDOW_MS</code></td><td>plain var</td><td>Per-key rate limit. Defaults are set in <code>wrangler.jsonc</code>.</td></tr>
+        <tr><td><code>AI_LOW_STOCK_THRESHOLD</code></td><td>plain var</td><td>Default <code>5</code>. What <code>?lowStock=</code> falls back to.</td></tr>
+      </table>
+      <pre><code>npx wrangler secret put HEROKU_API_TOKEN
+npx wrangler secret put APP_SECRET
+npm run deploy</code></pre>
+      <p>Mint the first API key in the dashboard under <strong>Apps → API keys</strong> (see <a href="#keys">Managing keys</a>).</p>
+      <div class="callout"><strong>Local development:</strong> Hyperdrive reads the local connection string from the environment, not from <code>.dev.vars</code>. Start the worker with it exported:<br /><code>CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://…" npx wrangler dev --port 8791</code></div>
+      <p><strong>Verify it:</strong> <code>AI_KEY=… node verify-resources.mjs</code> exercises every resource family end to end (create → read → update → delete), asserts bad input is a 400 rather than a 500, and checks that a duplicate name is a 409.</p>
+
+      <h3>5 · <code>shopify_integration</code> — the webhook worker</h3>
+      <pre><code>cd shopify_integration
+npm ci
+cp .dev.vars.example .dev.vars
+npx wrangler secret put HEROKU_API_TOKEN
+npx wrangler secret put APP_SECRET
+npm run deploy</code></pre>
+      <p>Same <code>HEROKU_APP_NAME</code> / <code>HEROKU_API_TOKEN</code> / <code>APP_SECRET</code> as the AI API. Optional <code>INVENTORY_PUSH_SKUS_PER_RUN</code> (default 250) caps how many SKUs are pushed per hourly run.</p>
+      <p>Then set <code>SHOPIFY_WEBHOOK_BASE_URL</code> on the backend to this worker's URL, so connecting a store registers its webhooks automatically.</p>
+
+      <h3>6 · <code>admin</code> — the operator panel</h3>
+      <pre><code>cd admin
+npm ci
+cp .dev.vars.example .dev.vars
+npx wrangler secret put ADMIN_PASSWORD      # gates the whole panel
+npx wrangler secret put HEROKU_API_TOKEN
+npm run deploy</code></pre>
+      <p>Cross-company view: every company, every error-log entry with its request context, and the platform-wide settings. <code>ADMIN_PASSWORD</code> is the only gate — use a long random value and treat it like a root credential.</p>
+
+      <h3>7 · <code>uptime</code> — status page and checks</h3>
+      <pre><code>cd uptime
+npm ci
+cp .dev.vars.example .dev.vars
+npx wrangler secret put ADMIN_KEY
+npm run deploy</code></pre>
+      <table>
+        <tr><th>Variable</th><th>What it does</th></tr>
+        <tr><td><code>SITE_NAME</code>, <code>SITE_URL</code></td><td>Shown on the public status page.</td></tr>
+        <tr><td><code>CHECKS</code></td><td>JSON array of endpoints to poll and their expected status.</td></tr>
+        <tr><td><code>ADMIN_KEY</code></td><td>Gates the run endpoint. Without it, anyone could trigger checks.</td></tr>
+        <tr><td><code>TELEGRAM_BOT_TOKEN</code>, <code>TELEGRAM_CHAT_ID</code></td><td>Optional alerts when a check fails.</td></tr>
+        <tr><td><code>SHOPIFY_WEBHOOK_URL</code></td><td>Optional: include the webhook worker in the checks.</td></tr>
+      </table>
+      <p><code>npm test</code> runs the check-engine unit tests; <code>npm run check</code> runs typecheck + build + tests together.</p>
+
+      <h3>8 · <code>cleanup_worker</code> — retention sweeps</h3>
+      <pre><code>cd cleanup_worker
+npm ci
+cp .dev.vars.example .dev.vars
+npx wrangler secret put HEROKU_API_TOKEN
+npx wrangler secret put ADMIN_KEY          # must match the uptime worker's ADMIN_KEY
+npm run deploy</code></pre>
+      <p>Deletes rows past their retention window on a cron schedule. Each window is a plain variable in <code>wrangler.jsonc</code>:</p>
+      <table>
+        <tr><th>Variable</th><th>Default</th><th>Deletes</th></tr>
+        <tr><td><code>SESSION_RETENTION_DAYS</code></td><td>45</td><td>Sessions that are revoked or expired</td></tr>
+        <tr><td><code>PASSWORD_RESET_RETENTION_DAYS</code></td><td>1</td><td>Used and expired password-reset tokens</td></tr>
+        <tr><td><code>NOTIFICATION_RETENTION_DAYS</code></td><td>14</td><td>Notifications — <strong>read ones only</strong>; unread rows are never touched</td></tr>
+        <tr><td><code>SYNC_ERROR_RETENTION_DAYS</code></td><td>90</td><td>Sync errors already resolved or ignored</td></tr>
+        <tr><td><code>AUDIT_LOG_RETENTION_DAYS</code></td><td>365</td><td>Audit log entries</td></tr>
+      </table>
+      <div class="warn"><strong>This worker deletes data.</strong> It refuses to run against a database where row-level security is not enforced, so a misconfigured connection cannot silently wipe every company's rows. <code>node verify-sweeps.mjs</code> proves both sides of every retention boundary before you trust it.</div>
+
+      <h3>9 · <code>api_docs</code> — this site</h3>
+      <p>No build step, no dependencies. <code>index.html</code> is the whole site.</p>
+      <pre><code>cd api_docs
+npx wrangler pages deploy . --project-name mawzun-docs</code></pre>
+
+      <h2 id="selfhost">Host the whole thing — end to end</h2>
+      <p>About 30 minutes once the accounts exist. Install in the order above; this is that order compressed.</p>
+      <ol class="steps">
+        <li><strong>Database.</strong> <code>heroku create your-mawzun-api</code>, then <code>heroku addons:create heroku-postgresql:essential-0</code>. Heroku exposes one rotating <code>DATABASE_URL</code>; Mawzun uses it for both roles, so tenant isolation is application-level <code>companyId</code> scoping. If your host gives two roles, set the restricted one as <code>DATABASE_URL</code> and the owner as <code>DIRECT_DATABASE_URL</code> for row-level-security defence in depth.</li>
+        <li><strong>Backend</strong> (<code>api/</code>). Set <code>JWT_KEY</code>, <code>APP_SECRET</code>, <code>CORS_ORIGIN</code>, <code>PASSWORD_RESET_APP_ORIGIN</code>. Deploy, then seed the owner and change its password.</li>
+        <li><strong>Dashboard</strong> (<code>frontend/</code>). Set <code>VITE_API_ORIGIN</code> to the backend URL, deploy, and point <code>CORS_ORIGIN</code> back at it.</li>
+        <li><strong>Marketing site</strong> (<code>web/</code>). Set <code>VITE_APP_ORIGIN</code> to the dashboard, deploy.</li>
+        <li><strong>Workers</strong> (<code>api_gateway/</code>, <code>shopify_integration/</code>, <code>admin/</code>, <code>uptime/</code>, <code>cleanup_worker/</code>). Each needs <code>HEROKU_APP_NAME</code> + <code>HEROKU_API_TOKEN</code>; the ones that unseal store tokens also need the backend's exact <code>APP_SECRET</code>. Deploy each with <code>npm run deploy</code>.</li>
+        <li><strong>Docs</strong> (<code>api_docs/</code>). <code>npx wrangler pages deploy .</code></li>
+        <li><strong>Shopify (optional).</strong> Set <code>SHOPIFY_FEATURE_ENABLED=1</code> on the backend, then connect the store in <strong>Stores</strong> with an Admin API token — webhooks register themselves. Backfill history with <code>POST /system/stores/:id/backfill</code> (2,500 orders per call; re-trigger to continue).</li>
+      </ol>
+      <div class="warn"><strong>Rotation &amp; topology rules that keep you safe:</strong> Heroku stays the source of truth for the database password — workers resolve it live, and <code>scripts/sync-hyperdrive.mjs</code> on a 10-minute scheduler keeps Hyperdrive in sync. Services share the database but never call each other. After Heroku rotates credentials, restart the backend dyno to pick up the new URL.</div>
+
+      <h2 id="keys">Managing keys</h2>
+      <p>Create and revoke keys in the Mawzun dashboard under <strong>Apps → مفاتيح API</strong> (cap <code>MAX_API_KEYS_PER_COMPANY</code>, default 5). Every create/rotate/revoke is audit-logged with the acting user. Key hashes are SHA-256; expiry is checked on every request.</p>
+    </main>
+  </div>
+</body>
+</html>

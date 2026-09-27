@@ -1,0 +1,110 @@
+// Geographic reference data and shipping carriers.
+
+// Shared reference data. Countries are global — they are not company data and
+// are never tenant-scoped.
+model Country {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  code         String  @unique @db.VarChar(2)
+  nameEn       String  @db.VarChar(100)
+  nameAr       String  @db.VarChar(100)
+  phoneCode    String  @db.VarChar(10)
+  currencyCode String? @db.VarChar(3)
+  isActive     Boolean @default(true)
+
+  @@map("countries")
+}
+
+model Governorate {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name String  @db.VarChar(255)
+  code String? @db.VarChar(20)
+
+  shippingCost Decimal @default(0) @db.Decimal(18, 2)
+  isActive     Boolean @default(true)
+
+  cities City[]
+  orders Order[]
+
+  @@index([companyId, name])
+  @@map("governorates")
+}
+
+model City {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name         String  @db.VarChar(255)
+  code         String? @db.VarChar(20)
+  shippingCost Decimal @default(0) @db.Decimal(18, 2)
+  isActive     Boolean @default(true)
+
+  governorateId String
+  governorate   Governorate @relation(fields: [governorateId], references: [id], onDelete: Restrict)
+
+  orders Order[]
+
+  @@unique([companyId, governorateId, name])
+  @@index([companyId])
+  @@index([governorateId])
+  @@map("cities")
+}
+
+enum CarrierType {
+  INTEGRATED
+  MANUAL
+}
+
+// The shipping company that moves an order. This merges the old
+// ShippingCompany (a plain name list attached to orders) and ShippingCarrier
+// (the integration with costs and credentials) — they were the same concept
+// stored twice.
+model Carrier {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name String @db.VarChar(150)
+  code String @db.VarChar(60)
+
+  type     CarrierType @default(MANUAL)
+  isActive Boolean     @default(true)
+
+  logoUrl             String? @db.VarChar(1000)
+  trackingUrlTemplate String? @db.VarChar(500)
+
+  // Provider credentials and per-carrier options. Free-form by nature; the
+  // shape is validated in code per carrier type.
+  settings Json?
+
+  defaultShippingCost         Decimal @default(0) @db.Decimal(18, 2)
+  defaultCustomerShippingCost Decimal @default(0) @db.Decimal(18, 2)
+  returnShippingCost          Decimal @default(0) @db.Decimal(18, 2)
+
+  autoSendOrderEnabled Boolean @default(false)
+
+  orders          Order[]
+  shippingReturns ShippingReturn[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("carriers")
+}

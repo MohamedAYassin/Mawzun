@@ -1,0 +1,62 @@
+name: api_gateway
+
+# Path-filtered so a change to one Worker does not rebuild the other seven
+# services. See api.yml for the reasoning.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api_gateway/**"
+      - ".github/workflows/api_gateway.yml"
+  pull_request:
+    paths:
+      - "api_gateway/**"
+      - ".github/workflows/api_gateway.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: api_gateway-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+
+    env:
+      # `wrangler` needs a local Postgres URL to emulate the Hyperdrive binding
+      # at build time. It reads this from the PROCESS ENVIRONMENT, not from
+      # .dev.vars — a trap worth knowing. The value is never used: a dry run
+      # does not connect.
+      CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE: postgresql://ci:ci@127.0.0.1:5432/ci
+
+    defaults:
+      run:
+        working-directory: api_gateway
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # Required in a monorepo: the default looks for the lockfile at the
+          # repository root and would never hit the cache.
+          cache: npm
+          cache-dependency-path: api_gateway/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # `wrangler deploy --dry-run` bundles the Worker exactly as a deploy
+      # would, without publishing. It catches a broken import or a bad binding
+      # that a typecheck alone would miss.
+      - name: Build (wrangler dry run)
+        run: npm run build

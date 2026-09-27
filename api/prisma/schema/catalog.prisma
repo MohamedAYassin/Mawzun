@@ -1,0 +1,318 @@
+// Product catalog: everything that describes what the company sells.
+
+enum AttributeType {
+  TEXT
+  SELECT
+  COLOR
+}
+
+enum MergeStatus {
+  PENDING
+  MERGED
+  CANCELLED
+}
+
+model Brand {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name        String  @db.VarChar(255)
+  slug        String? @db.VarChar(255)
+  description String? @db.VarChar(1000)
+  logoUrl     String? @db.VarChar(2000)
+  isActive    Boolean @default(true)
+
+  products Product[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@index([companyId, deletedAt])
+  @@map("brands")
+}
+
+model Category {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name        String  @db.VarChar(255)
+  slug        String? @db.VarChar(255)
+  description String? @db.VarChar(1000)
+  imageUrl    String? @db.VarChar(2000)
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  parentId String?
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+
+  products Product[]
+
+  @@unique([companyId, name])
+  @@index([companyId, parentId])
+  @@map("categories")
+}
+
+// Unit of measure. Company-scoped: each company defines its own "piece",
+// "box", "kilogram" set.
+model Uom {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  code     String  @db.VarChar(30)
+  name     String  @db.VarChar(100)
+  category String  @default("general") @db.VarChar(60)
+  isActive Boolean @default(true)
+
+  products Product[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("uoms")
+}
+
+model TaxRate {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name       String  @db.VarChar(100)
+  percentage Decimal @db.Decimal(5, 2)
+  isDefault  Boolean @default(false)
+  isActive   Boolean @default(true)
+
+  salesProducts    Product[] @relation("ProductSalesTax")
+  purchaseProducts Product[] @relation("ProductPurchaseTax")
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("tax_rates")
+}
+
+model Product {
+  id         String    @id @default(uuid(7))
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  // Soft-deleted rather than removed: orders keep referencing the product they
+  // were placed against, so history must survive.
+  deletedAt  DateTime?
+  archivedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name        String  @db.VarChar(255)
+  slug        String? @db.VarChar(255)
+  description String? @db.VarChar(4000)
+  skuCode     String? @db.VarChar(100)
+  barcode     String? @db.VarChar(100)
+  isActive    Boolean @default(true)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: Restrict)
+
+  uomId String?
+  uom   Uom?    @relation(fields: [uomId], references: [id], onDelete: Restrict)
+
+  price               Decimal  @default(0) @db.Decimal(18, 2)
+  priceBeforeDiscount Decimal? @db.Decimal(18, 2)
+  costPrice           Decimal  @default(0) @db.Decimal(18, 2)
+
+  salesTaxRateId String?
+  salesTaxRate   TaxRate? @relation("ProductSalesTax", fields: [salesTaxRateId], references: [id], onDelete: Restrict)
+
+  purchaseTaxRateId String?
+  purchaseTaxRate   TaxRate? @relation("ProductPurchaseTax", fields: [purchaseTaxRateId], references: [id], onDelete: Restrict)
+
+  weightKg    Decimal? @db.Decimal(18, 3)
+  trackStock  Boolean  @default(true)
+  trackExpiry Boolean  @default(false)
+
+  // Shopify linkage (written by shopify_integration product ingestion).
+  // BigInt values are returned as strings by postgres.js — cast when comparing.
+  shopifyVariantId       BigInt? @db.BigInt
+  shopifyInventoryItemId BigInt? @db.BigInt
+
+  images                ProductImage[]
+  variants              ProductVariant[]
+  stockLevels           StockLevel[]
+  reorderPoints         ReorderPoint[]
+  orderItems            OrderItem[]
+  purchaseOrderItems    PurchaseOrderItem[]
+  productionBatchItems  ProductionBatchItem[]
+  inventoryTransactions InventoryTransaction[]
+  stockCountItems       StockCountItem[]
+  stockOperationItems   StockOperationItem[]
+  sourceOfMerges        ProductMerge[]         @relation("MergeSource")
+  targetOfMerges        ProductMerge[]         @relation("MergeTarget")
+
+  @@index([companyId, deletedAt])
+  @@index([companyId, skuCode])
+  @@index([companyId, barcode])
+  @@index([categoryId])
+  @@index([brandId])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  imageUrl  String  @db.VarChar(2000)
+  altText   String? @db.VarChar(255)
+  sortOrder Int     @default(0)
+  isPrimary Boolean @default(false)
+
+  @@index([productId])
+  @@index([companyId])
+  @@map("product_images")
+}
+
+model ProductAttribute {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name      String        @db.VarChar(150)
+  code      String        @db.VarChar(100)
+  type      AttributeType @default(SELECT)
+  isActive  Boolean       @default(true)
+  sortOrder Int           @default(0)
+
+  values ProductAttributeValue[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("product_attributes")
+}
+
+model ProductAttributeValue {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  attributeId String
+  attribute   ProductAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  value     String  @db.VarChar(255)
+  colorHex  String? @db.VarChar(9)
+  skuSuffix String? @db.VarChar(100)
+  barcode   String? @db.VarChar(100)
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  variantLinks ProductVariantAttribute[]
+
+  @@unique([attributeId, value])
+  @@index([companyId])
+  @@index([attributeId])
+  @@map("product_attribute_values")
+}
+
+model ProductVariant {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  name      String  @db.VarChar(255)
+  skuCode   String  @db.VarChar(100)
+  barcode   String? @db.VarChar(100)
+  price     Decimal @default(0) @db.Decimal(18, 2)
+  costPrice Decimal @default(0) @db.Decimal(18, 2)
+  imageUrl  String? @db.VarChar(2000)
+  isActive  Boolean @default(true)
+
+  // Explicit join: the old implicit many-to-many had no companyId column, so
+  // the join rows were invisible to tenant scoping.
+  attributes          ProductVariantAttribute[]
+  stockOperationItems StockOperationItem[]
+
+  @@unique([productId, skuCode])
+  @@index([companyId])
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model ProductVariantAttribute {
+  id String @id @default(uuid(7))
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  valueId String
+  value   ProductAttributeValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+
+  @@unique([variantId, valueId])
+  @@index([companyId])
+  @@index([valueId])
+  @@map("product_variant_attributes")
+}
+
+model ProductMerge {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  sourceProductId String
+  sourceProduct   Product @relation("MergeSource", fields: [sourceProductId], references: [id], onDelete: Cascade)
+
+  targetProductId String
+  targetProduct   Product @relation("MergeTarget", fields: [targetProductId], references: [id], onDelete: Restrict)
+
+  reason   String?     @db.VarChar(500)
+  status   MergeStatus @default(PENDING)
+  mergedAt DateTime?
+
+  @@index([companyId])
+  @@index([sourceProductId])
+  @@index([targetProductId])
+  @@map("product_merges")
+}

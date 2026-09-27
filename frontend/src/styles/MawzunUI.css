@@ -1,0 +1,1517 @@
+/* ==========================================================================
+   Mawzun UI — Cloud White override layer
+   Restyles the shared page primitives (ss-*, io-*, pb-*, co-*, view-*, metric-*)
+   that every dashboard page already uses, so all 60+ screens inherit the new
+   design system without touching page logic. Selectors are prefixed with `body`
+   so they win over the per-page stylesheets regardless of import order.
+   ========================================================================== */
+
+/* ── Page shell & headers ───────────────────────────────────────────── */
+body .ss-container,
+body .io-container,
+body .view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0;
+  background: transparent;
+  direction: rtl;
+  text-align: right;
+}
+
+body .ss-body,
+body .ss-content {
+  display: block;
+  padding: 0;
+  background: transparent;
+  gap: 1.25rem;
+}
+
+/* In-page section tabs (system-settings): horizontal chip bar */
+body .ss-nav-card {
+  display: block;
+  position: static;
+  overflow: visible;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  box-shadow: none;
+}
+
+body .ss-nav-card .ss-nav-label,
+body .ss-nav-card .ss-nav-footer {
+  display: none;
+}
+
+body .ss-nav-card .ss-nav {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.55rem;
+}
+
+body .ss-nav-card .ss-nav-btn {
+  width: auto;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  transform: none;
+}
+
+body .ss-nav-card .ss-nav-btn:hover {
+  border-color: var(--color-accent);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transform: none;
+}
+
+body .ss-nav-card .ss-nav-btn-active,
+body .ss-nav-card .ss-nav-btn-active:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+  box-shadow: none;
+}
+
+body .ss-nav-card .ss-nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 1.25rem;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+}
+
+body .ss-nav-card .ss-nav-text small,
+body .ss-nav-card .ss-nav-arrow {
+  display: none;
+}
+
+/* ── Brand wordmark: the "mawzun" name is always the SVG, never plain text ── */
+body img.brand-wordmark {
+  display: block;
+  height: 1.35em;
+  width: auto;
+}
+
+body img.brand-inline {
+  display: inline-block;
+  height: 1.15em;
+  width: auto;
+  vertical-align: -0.25em;
+  margin: 0 0.28em;
+}
+
+body .ss-page-header,
+body .view-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+body .ss-page-title,
+body .view-header-title,
+body .io-page-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+body .ss-page-sub,
+body .view-header-subtitle,
+body .io-page-sub {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+}
+
+body .ss-page-kicker,
+body .ss-eyebrow,
+body .ss-editor-kicker,
+body .io-eyebrow {
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Cards / modules / surfaces ─────────────────────────────────────── */
+body .ss-module,
+body .io-module,
+body .pb-module,
+body .section-card,
+body .ss-data-surface,
+body .io-data-surface,
+body .pb-data-surface,
+body .ss-editor,
+body .io-editor,
+body .ss-multi-editor,
+body .ss-multi-editor-full,
+body .pb-multi-editor-full,
+body .io-nested-form-section,
+body .co-expanded-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+}
+
+/* .io-multi-editor-full is a GRID-SPAN UTILITY (grid-column: 1 / -1), not a
+   card: it is put on heading strips, single full-width fields and wizard nav
+   bars. Giving it a card surface painted a stray white bar inside the grey
+   form and its rounded corner clipped the first glyph of an RTL heading that
+   ran to the edge. The genuine card children in that grid
+   (.io-nested-form-section) keep their own surface above. */
+body .io-multi-editor-full:not(.io-nested-form-section) {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body .ss-module,
+body .io-module,
+body .pb-module,
+body .section-card {
+  padding: 1.4rem;
+}
+
+body .ss-data-surface,
+body .io-data-surface,
+body .pb-data-surface {
+  padding: 0;
+  overflow: hidden;
+}
+
+/*
+ * A module heading supplies its own inset. It normally sits inside
+ * .ss-module / .pb-module, which carry 1.4rem of padding, so the heading
+ * itself never needed any — but OrderManagement puts it directly inside
+ * .io-data-surface (padding: 0, overflow: hidden). There the h2's line box
+ * started 1px below the clipped edge and the Arabic ascenders were shaved
+ * flat. The padding lives here so the heading is correct in any container.
+ */
+body .ss-module-heading,
+body .io-module-heading,
+body .pb-module-heading {
+  padding: 0.9rem 1rem;
+}
+
+/* Inside a padded module the heading keeps its old flush alignment. */
+body .ss-module > .ss-module-heading,
+body .pb-module > .pb-module-heading {
+  padding: 0;
+}
+
+body .ss-module-heading h2,
+body .io-module-heading h2,
+body .pb-module-heading h2,
+body .section-card-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+body .ss-module-heading p:not(.ss-eyebrow),
+body .io-module-heading p:not(.io-eyebrow) {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+body .ss-module-icon,
+body .io-module-icon,
+body .metric-icon-wrapper {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-radius: var(--radius-md);
+}
+
+/* ── Metrics ─────────────────────────────────────────────────────────── */
+body .metric-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+body .metric-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--card-shadow);
+}
+
+body .metric-label {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+body .metric-value {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+body .metric-subtext {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+body .ss-button,
+body .io-button,
+body .pb-button,
+body .co-btn,
+body .btn-filter,
+body .btn-filter-apply,
+body .btn-filter-clear {
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  box-shadow: none;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+body .ss-button:active:not(:disabled),
+body .io-button:active:not(:disabled),
+body .pb-button:active:not(:disabled),
+body .co-btn:active:not(:disabled),
+body .btn-filter:active:not(:disabled),
+body .btn-filter-apply:active:not(:disabled),
+body .btn-filter-clear:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+body .ss-button-primary,
+body .io-button-primary,
+body .co-btn-primary,
+body .btn-filter-apply {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  box-shadow: var(--shadow-sm);
+}
+
+body .ss-button-primary:hover:not(:disabled),
+body .io-button-primary:hover:not(:disabled),
+body .co-btn-primary:hover:not(:disabled),
+body .btn-filter-apply:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+body .ss-button-secondary,
+body .io-button-secondary,
+body .btn-filter,
+body .btn-filter-clear {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+body .ss-button-secondary:hover:not(:disabled),
+body .io-button-secondary:hover:not(:disabled),
+body .btn-filter:hover:not(:disabled),
+body .btn-filter-clear:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+body .ss-button-ghost,
+body .io-button-ghost {
+  background: transparent;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+body .ss-button-ghost:hover:not(:disabled),
+body .io-button-ghost:hover:not(:disabled) {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body .ss-button-danger,
+body .io-button-danger {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+body .ss-button-danger:hover:not(:disabled),
+body .io-button-danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+}
+
+body .ss-button:disabled,
+body .io-button:disabled,
+body .pb-button:disabled,
+body .co-btn:disabled,
+body .btn-filter:disabled,
+body .btn-filter-apply:disabled,
+body .btn-filter-clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+/* ── Scrollable table wrapper ────────────────────────────────────────── */
+/*
+ * These wrappers were in the markup but had no rule, so they computed to
+ * `overflow-x: visible` and a table wider than the viewport was simply clipped:
+ * on a 390px screen an 808px table lost its last 452px with no way to reach it,
+ * and the page could not scroll either. .ss-table-scroll and .pos-table-scroll
+ * had the rule; the rest did not.
+ *
+ * `min-width: 0` matters in a flex or grid parent, where the default
+ * `min-width: auto` refuses to shrink below the content and the wrapper would
+ * grow to fit the table instead of scrolling it.
+ */
+body .io-table-scroll,
+body .ao-table-scroll,
+body .co-table-scroll,
+body .om-table-scroll,
+body .ss-table-scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Inputs & fields ────────────────────────────────────────────────── */
+/*
+ * Baseline for form controls that carry no class of their own. 77 of them
+ * across the app — checkboxes, file pickers, search boxes, count fields — were
+ * rendering as raw browser controls, which is what made those editor panels
+ * look like a bare HTML page next to the rest of the dashboard.
+ *
+ * `:not([class])` keeps this off anything already styled, so it cannot fight
+ * .ss-input / .io-input / .pb-input or a component's own rules.
+ */
+body input:not([class]):not([type='checkbox']):not([type='radio']):not([type='file']),
+body select:not([class]) {
+  /* A fixed height with no vertical padding is what centres a single-line
+     value: the browser centres text in the content box, so padding-top and
+     padding-bottom must both be zero or the value drifts off-centre. */
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: 1.2;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+body textarea:not([class]) {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: 1.4;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+/*
+ * A checkbox field shares a grid row with text fields but carries no label
+ * above it. The editor rows align to the bottom, so a 17px checkbox dropped to
+ * the baseline of a 40px input and sat ~11px low. Matching the input's height
+ * puts both centres on the same line.
+ */
+.ss-editor-field > .ss-checkbox-label,
+.io-editor-field > .ss-checkbox-label,
+.pb-editor-field > .ss-checkbox-label,
+.ss-form-field > .ss-checkbox-label {
+  min-height: 2.5rem;
+}
+
+body input:not([class]):focus,
+body select:not([class]):focus,
+body textarea:not([class]):focus {
+  border-color: var(--border-color-focus);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  outline: none;
+}
+
+body input:not([class])::placeholder,
+body textarea:not([class])::placeholder {
+  color: var(--text-muted);
+}
+
+/* A checkbox is a control, not a text field: it needs the accent colour and a
+   focus ring, not a border and a background. */
+body input[type='checkbox']:not([class]),
+body input[type='radio']:not([class]) {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--color-accent);
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+body input[type='file']:not([class]) {
+  padding: 0.35rem;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+body input[type='file']:not([class])::file-selector-button {
+  margin-inline-end: 0.6rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+body .ss-input,
+body .io-input,
+body .pb-input,
+body .filter-input-inline,
+body .ss-editor-field input,
+body .ss-editor-field select,
+body .ss-editor-field textarea,
+body .io-editor-field input,
+body .io-editor-field select,
+body .io-editor-field textarea {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  box-shadow: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+body .ss-input:focus,
+body .io-input:focus,
+body .pb-input:focus,
+body .ss-editor-field input:focus,
+body .ss-editor-field select:focus,
+body .ss-editor-field textarea:focus,
+body .io-editor-field input:focus,
+body .io-editor-field select:focus,
+body .io-editor-field textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  outline: none;
+}
+
+body .ss-input::placeholder,
+body .io-input::placeholder,
+body .pb-input::placeholder {
+  color: var(--text-muted);
+}
+
+body .ss-editor-field label,
+body .ss-form-field label,
+body .io-editor-field label {
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+/*
+ * Layout primitives for the io-* multi-step editors.
+ *
+ * These four classes are shared by every wizard (add-sale, add-product,
+ * exchange-requests, return-requests), but their LAYOUT was defined only in
+ * AddSale.css, which the other pages never import. On add-product the form
+ * therefore fell back to `display: block`: each field stacked as a block, the
+ * input kept its intrinsic inline-block width (~160px inside a 1600px card)
+ * and lost its height, and .io-multi-editor-full's grid span did nothing.
+ * The primitives live here so every wizard gets the same geometry.
+ */
+body .io-editor-field,
+body .io-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+body .io-multi-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0.9rem 0 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+body .io-multi-editor-full {
+  grid-column: 1 / -1;
+}
+
+/* Single-line value centring: fixed height, no vertical padding. */
+body .pb-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  text-align: right;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+body .pb-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+@media (max-width: 640px) {
+  body .io-multi-editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+body .ss-form-field small,
+body .ss-form-field label span {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+body .ss-search,
+body .io-search {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+}
+
+body .ss-search:focus-within,
+body .io-search:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+body .ss-search input,
+body .io-search input {
+  color: var(--text-primary);
+  font-size: var(--fs-base);
+}
+
+body .ss-search input::placeholder {
+  color: var(--text-muted);
+}
+
+body .ss-checkbox-label {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+body .ss-checkbox-label input[type='checkbox'],
+body input[type='checkbox'],
+body input[type='radio'] {
+  accent-color: var(--color-accent);
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────── */
+body .ss-table,
+body .io-table,
+body .pb-table,
+body .data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+body .ss-table th,
+body .io-table th,
+body .pb-table th,
+body .data-table th,
+body .ss-table-scroll .ss-table th,
+body .io-table-scroll .io-table th,
+body .ao-table-scroll .io-table th {
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+body .ss-table td,
+body .io-table td,
+body .pb-table td,
+body .data-table td,
+body .ss-table-scroll .ss-table td,
+body .io-table-scroll .io-table td,
+body .ao-table-scroll .io-table td {
+  padding: 0.8rem 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--fs-base);
+  font-variant-numeric: tabular-nums;
+}
+
+body .ss-table tbody tr:hover,
+body .io-table tbody tr:hover,
+body .pb-table tbody tr:hover,
+body .data-table tbody tr:hover {
+  background: var(--bg-canvas);
+  transition: background var(--transition);
+}
+
+body .ss-table tbody tr:last-child td,
+body .io-table tbody tr:last-child td,
+body .data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+body .ss-item-name,
+body .io-item-name {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+body .ss-row-number,
+body .io-row-number {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+body .ss-related-badge,
+body .io-related-badge,
+body .ss-count-chip {
+  background: var(--color-accent-soft);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--color-accent-hover);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+/* ── Row actions ─────────────────────────────────────────────────────── */
+body .ss-icon-button,
+body .io-icon-button {
+  border-radius: var(--radius-xs);
+  border: 1px solid transparent;
+}
+
+body .ss-icon-edit,
+body .io-icon-edit {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+body .ss-icon-edit:hover:not(:disabled),
+body .io-icon-edit:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+body .ss-icon-delete,
+body .io-icon-delete {
+  background: var(--bg-secondary);
+  color: var(--color-danger);
+}
+
+body .ss-icon-delete:hover:not(:disabled),
+body .io-icon-delete:hover:not(:disabled) {
+  background: var(--color-danger-soft);
+}
+
+/* ── Status, empty & loading states ─────────────────────────────────── */
+body .ss-status {
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+}
+
+body .ss-status-success {
+  background: var(--color-success-soft);
+  border-color: transparent;
+  color: var(--color-success);
+}
+
+body .ss-status-error {
+  background: var(--color-danger-soft);
+  border-color: transparent;
+  color: var(--color-danger);
+}
+
+body .ss-status-info {
+  background: var(--color-accent-soft);
+  border-color: transparent;
+  color: var(--color-accent-hover);
+}
+
+body .ss-inline-info {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+}
+
+body .ss-empty-state h3,
+body .io-empty-state h3 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+}
+
+body .ss-empty-state p,
+body .io-empty-state p,
+body .empty-state {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+body .ss-empty-mark,
+body .io-empty-mark {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+
+body .ss-skeleton-row {
+  border-bottom: 1px solid var(--border-color);
+}
+
+body .ss-skeleton-row span {
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--bg-secondary) 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+}
+
+/* ── Popovers / dropdowns ───────────────────────────────────────────── */
+body .filter-dropdown,
+body .ss-dropdown,
+body .io-dropdown {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+}
+
+body .filter-btn-trigger:hover {
+  background: var(--bg-secondary);
+}
+
+body .filter-accordion-content {
+  background: var(--bg-canvas);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Misc legacy cards ──────────────────────────────────────────────── */
+body .ss-security-card,
+body .ss-lock-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-canvas);
+}
+
+body .ss-security-mark,
+body .ss-lock-mark {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-radius: var(--radius-md);
+}
+
+body .ao-filter-bar input,
+body .ao-filter-bar select,
+body .ao-filter-bar button {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+}
+
+body .ao-filter-bar button.ao-shortage-active {
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+/* ==========================================================================
+   Pass 2 — remaining page families (om-*, ss-panel, toolbars, pagination,
+   metric grids, roles/permission cards) folded into the same Cloud White
+   language so every screen reads as one product.
+   ========================================================================== */
+
+/* ── Panels / cards that were still on legacy paper styling ─────────── */
+body .ss-panel,
+body .om-expanded-content,
+body .co-panel,
+body .card,
+body .view-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem 1.35rem;
+}
+
+body .om-expanded-section,
+body .co-expanded-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  padding: 0.9rem 1rem;
+}
+
+body .om-expanded-section h4 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+
+body .om-expanded-section div span {
+  color: var(--text-secondary);
+}
+
+/* ── Toolbars & filter bars ─────────────────────────────────────────── */
+body .om-filter-bar,
+body .responsive-toolbar,
+body .ss-list-toolbar,
+body .io-list-toolbar,
+body .filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  margin-bottom: 1rem;
+}
+
+/* Pager under a paginated table. Mirrors the .ss-list-toolbar pager used by the
+   settings-style screens so both families of table look the same. */
+body .io-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+body .io-pager-status {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+body .om-filter-bar input,
+body .om-filter-bar select,
+body .filter-bar input,
+body .filter-bar select {
+  height: 38px;
+  padding: 0 0.85rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+body .om-filter-bar input:focus,
+body .om-filter-bar select:focus,
+body .filter-bar input:focus,
+body .filter-bar select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+/* ── Row / table refinements for the order tables ───────────────────── */
+body .om-row:hover,
+body .om-table-scroll .io-table tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+body .om-table-scroll .io-table th {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+body .om-table-scroll .io-table td {
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+}
+
+body .om-items-table th,
+body .om-items-table td {
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--fs-xs);
+}
+
+/* Inline text actions (e.g. "حذف") become consistent danger buttons */
+body .view-container .io-table td button:not([class]),
+body .ss-table td button:not([class]) {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+body .view-container .io-table td button:not([class]):hover,
+body .ss-table td button:not([class]):hover {
+  border-color: var(--color-danger);
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────── */
+body .om-shortage-badge,
+body .om-needs-mfg {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-warning-soft, var(--bg-secondary));
+  color: var(--color-warning, var(--text-secondary));
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+body .om-available {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+/* ── Metric grids ───────────────────────────────────────────────────── */
+body .auto-grid,
+body .auto-grid-lg,
+body .metric-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+body .metric-card {
+  border-radius: var(--radius-lg);
+}
+
+/* ── Pagination ─────────────────────────────────────────────────────── */
+body .pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+body .pagination-bar button {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.7rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+body .pagination-bar button:hover:not(:disabled) {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+body .pagination-bar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Legacy link-styled buttons inside cards ────────────────────────── */
+body .forgot-btn.ss-card-action,
+body .ss-card-action {
+  background: transparent;
+  border: 0;
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Save/primary legacy button ─────────────────────────────────────── */
+body .ss-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 38px;
+  padding: 0 1.1rem;
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border: 0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+body .ss-btn-save:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+/* ── Dense form pass: Add Sale / Add Product / Production / Scanning ───── */
+body .pb-container,
+body .as-container,
+body .ap-container,
+body .sc-container {
+  padding: 0;
+  color: var(--text-primary);
+}
+
+body .pb-card,
+body .pb-panel,
+body .as-card,
+body .as-panel,
+body .ap-card,
+body .sc-card,
+body .sc-panel,
+body .sc-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+body .pb-form-grid,
+body .as-form-grid,
+body .ap-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+body .pb-input,
+body .as-input,
+body .ap-input,
+body .sc-input,
+body .pb-container input,
+body .pb-container select,
+body .pb-container textarea,
+body .sc-container input,
+body .sc-container select {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+}
+
+body .pb-input:focus,
+body .as-input:focus,
+body .ap-input:focus,
+body .sc-input:focus,
+body .pb-container input:focus,
+body .pb-container select:focus,
+body .pb-container textarea:focus,
+body .sc-container input:focus,
+body .sc-container select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  outline: none;
+}
+
+body .pb-status-planned { background: var(--color-accent-soft); color: var(--color-accent-hover); border-color: transparent; }
+body .pb-status-inprogress { background: var(--color-warning-soft); color: var(--color-warning); border-color: transparent; }
+body .pb-status-completed { background: var(--color-success-soft); color: var(--color-success); border-color: transparent; }
+body .pb-status-cancelled { background: var(--color-danger-soft); color: var(--color-danger); border-color: transparent; }
+
+body .ap-step-item.ap-step-active { background: var(--color-accent-soft); }
+body .ap-review-section { background: var(--bg-primary); border-radius: var(--radius-md); }
+
+/* ==========================================================================
+   Pass 3 — classes shared across page families, promoted out of page CSS.
+
+   These were defined in ONE page's stylesheet but used by other pages that
+   never imported it. Vite injects a stylesheet when its module first loads and
+   keeps it for the session, so the pages looked correct when reached by
+   clicking through the app and rendered unstyled on a cold load (a refresh or
+   a deep link) — the reported symptom: metric cards stacked as full-width
+   blocks, tables with no padding or header background, filter bars collapsed.
+
+   The rule that keeps this from recurring: a class used by more than one page
+   family belongs HERE, in the globally-loaded sheet, not in a page's own CSS.
+
+   Sources: ConfirmationOverview.css (co-*), DataGrid.css (dg-*),
+   AddSale.css/Production.css (io-nested-*), ChangePassword.css /
+   CompanyProfile.css (cp-alert*, cp-input), Production.css
+   (.animate-fade-in).
+   ========================================================================== */
+
+/* ── Metric grid: the shipping/confirmation KPI row ─────────────────── */
+body .co-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Filter bar (search + select above a table) ─────────────────────── */
+body .co-filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+body .co-filter-bar input {
+  flex: 1;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+}
+
+body .co-filter-bar select {
+  flex-shrink: 0;
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  cursor: pointer;
+}
+
+body .co-filter-bar input:focus,
+body .co-filter-bar select:focus {
+  border-color: var(--border-color-focus);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  outline: none;
+}
+
+/* ── Compact data table (inside an expanded row or a small panel) ───── */
+body .co-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  margin-top: 0.5rem;
+}
+
+body .co-items-table th,
+body .co-items-table td {
+  padding: 0.45rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* A reference/SKU-style value must not wrap mid-token: on a narrow column
+   "SC-00014" broke across two lines and read as two separate values. */
+body .co-items-table td > button,
+body .co-items-table td > span[dir='ltr'],
+body .co-items-table td > strong {
+  white-space: nowrap;
+}
+
+body .co-items-table th {
+  background: var(--bg-secondary);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+}
+
+/* A floor so the table scrolls inside its wrapper instead of squeezing its
+   columns into unreadable slivers. */
+body .co-table-scroll .co-items-table,
+body .io-table-scroll .co-items-table {
+  min-width: 620px;
+}
+
+body .co-row:hover {
+  background: var(--bg-canvas);
+}
+
+/* ── Expanded row panel (orders / shipping) ─────────────────────────── */
+body .co-expanded-row td {
+  padding: 0 !important;
+}
+
+body .co-expanded-content {
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body .co-expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+body .co-expanded-section h4 {
+  margin: 0 0 0.5rem;
+  font-size: var(--fs-sm);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.4rem;
+}
+
+body .co-expanded-section div {
+  font-size: var(--fs-sm);
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+body .co-expanded-section div span {
+  font-weight: 600;
+  margin-left: 0.3rem;
+  color: var(--text-secondary);
+}
+
+body .co-expanded-full {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+}
+
+body .co-expanded-full:first-of-type {
+  margin-top: 0;
+}
+
+/* ── Shipping status badges + action buttons ────────────────────────── */
+body .co-shortage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-radius: var(--radius-xs);
+  padding: 2px 6px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+body .co-needs-mfg {
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+
+body .co-available {
+  color: var(--color-success);
+  font-size: var(--fs-sm);
+}
+
+/* Semantic action buttons: green = advance, red = reverse. These are states,
+   not a second button style, so they sit on top of the .co-btn base above.
+
+   NOTE: the global .co-btn rule above is only the shared *skin* (radius, font,
+   transition). The layout half — display, padding, cursor, white-space — lived
+   only in ConfirmationOverview.css, so any page using .co-btn without importing
+   it got a button that was not even inline-flex. Both halves are completed
+   here. */
+body .co-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  gap: 0.4rem;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+body .co-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+body .co-btn-confirm {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+body .co-btn-confirm:hover:not(:disabled) {
+  background: var(--color-success);
+  filter: brightness(0.92);
+}
+
+body .co-btn-cancel {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+body .co-btn-cancel:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+}
+
+/* ── Nested editor row (add-sale / add-product / production) ────────── */
+body .io-nested-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+body .io-nested-row-btn {
+  flex: 0 0 auto;
+  margin-top: 1.2rem;
+}
+
+/* ── DataGrid bits used by pages that render their own table ────────── */
+body .dg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+body .dg-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+body tr.dg-group-header td {
+  background: var(--bg-secondary);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  padding: 0.45rem 0.75rem;
+}
+
+/* ── Auth/account alerts reused by the public password pages ────────── */
+body .cp-alert {
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
+  margin-bottom: 1.5rem;
+  font-family: var(--font-body);
+  border: 1px solid transparent;
+}
+
+body .cp-alert-error {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+}
+
+body .cp-alert-success {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+  border-color: var(--color-success);
+}
+
+body .cp-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--fs-base);
+}
+
+body .cp-input:focus {
+  border-color: var(--border-color-focus);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  outline: none;
+}
+
+/* ── Entrance animation ─────────────────────────────────────────────── */
+/* Was defined only in Production.css, so every page that animates in
+   silently got no animation unless Production had been visited. */
+body .animate-fade-in {
+  animation: fadeIn 220ms ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  body .co-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body .co-expanded-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  body .co-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body .co-expanded-grid {
+    grid-template-columns: 1fr;
+  }
+}

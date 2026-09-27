@@ -1,0 +1,48 @@
+# Local dev bindings for `npx wrangler dev`. Copy to `.dev.vars` and fill in:
+#   cp .dev.vars.example .dev.vars
+# `.dev.vars` is gitignored — secrets never get committed.
+#
+# WITHOUT the Hyperdrive binding (local dev), this worker resolves the live
+# DATABASE_URL from the Heroku Platform API — never preset, rotation heals.
+#
+# HEROKU_APP_NAME  — "mawzun" (plain text)
+# HEROKU_API_TOKEN — local dev: output of `heroku auth:token`
+#                    prod: create once with `heroku authorizations:create`,
+#                    set as a Secret (not a Variable) in Cloudflare.
+# DATABASE_SSL     — "1" forces TLS on the resolved URL (auto-detected from
+#                    the URL's sslmode in most cases; set for local tunnels).
+# DB_URL_TTL_MS    — resolver cache TTL (default 300000 = 5 min).
+# APP_SECRET       — HKDF key that unseals Shopify-style secrets read from the
+#                    DB (must EXACTLY match the backend's APP_SECRET).
+#
+# --- Hyperdrive in local dev ------------------------------------------------
+# `wrangler dev` refuses to start when the HYPERDRIVE binding has no local
+# Postgres to talk to. It reads the local connection string from the PROCESS
+# ENVIRONMENT, not from this file — setting it here has no effect, which is a
+# trap worth knowing before you spend an hour on it. Export it on the command
+# line instead (PowerShell shown; use `export` in bash):
+#
+#   $env:CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE = "<DATABASE_URL>"
+#   npx wrangler dev --port 8791
+#
+# Use the backend's restricted-role DATABASE_URL so row-level security behaves
+# the same locally as in production. Never paste the owner URL here: the owner
+# bypasses RLS, so a local run against it would silently pass tests that the
+# deployed worker would fail.
+HEROKU_APP_NAME=mawzun
+HEROKU_API_TOKEN=
+# DATABASE_SSL=1
+# DB_URL_TTL_MS=300000
+APP_SECRET=
+
+# --- AI per-key throttle (Layerbase Redis REST) — src/ratelimit.ts -----------
+# Layerbase's REST endpoint is Upstash-compatible; both spellings work:
+# UPSTASH_REDIS_REST_URL / REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN /
+# REDIS_REST_TOKEN. Unset = fail-open (no enforcement) + one warning per
+# isolate. Kill switch: AI_RATE_LIMIT_DISABLED=0/false/no = off.
+# UPSTASH_REDIS_REST_URL=https://<your-rest-url>
+# UPSTASH_REDIS_REST_TOKEN=<your-rest-token>
+# Per-key overrides (set on the API-keys screen, null = these defaults):
+AI_RATE_LIMIT_MAX=600
+AI_RATE_LIMIT_WINDOW_MS=60000
+# AI_RATE_LIMIT_DISABLED=0

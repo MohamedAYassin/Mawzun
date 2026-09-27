@@ -1,0 +1,223 @@
+/* Company profile.
+ *
+ * Follows the dashboard's existing visual language: accent green, soft radii,
+ * and a right-to-left flow with left-to-right overrides on machine-readable
+ * values (slug, email, codes) so they stay legible in an Arabic layout.
+ */
+
+.cp-container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 1100px;
+}
+
+.cp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cp-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cp-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.cp-muted {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ---------- Status pill ---------- */
+
+.cp-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.cp-status-active {
+  background: rgba(87, 107, 38, 0.12);
+  color: #576b26;
+}
+
+.cp-status-suspended,
+.cp-status-closed {
+  background: rgba(180, 35, 24, 0.1);
+  color: #b42318;
+}
+
+/* ---------- Identity summary ---------- */
+
+.cp-identity {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-primary);
+  padding: 1.25rem;
+}
+
+.cp-identity-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.9rem;
+}
+
+.cp-facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem 1.5rem;
+}
+
+.cp-facts dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.cp-facts dd {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Form ---------- */
+
+.cp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cp-form fieldset {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-primary);
+  padding: 1rem 1.25rem 1.25rem;
+  margin: 0;
+}
+
+/* Greyed out rather than hidden, so a user without edit rights can still read
+   what the company's details are. */
+.cp-form fieldset:disabled {
+  opacity: 0.65;
+}
+
+.cp-form legend {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 0 0.4rem;
+}
+
+.cp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem 1.25rem;
+}
+
+.cp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cp-field-wide {
+  grid-column: 1 / -1;
+}
+
+.cp-field > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cp-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.cp-button {
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  padding: 0.65rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.cp-button-primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.cp-button-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.cp-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---------- Notices ---------- */
+
+.cp-notice,
+.cp-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cp-notice {
+  background: rgba(87, 107, 38, 0.1);
+  color: #576b26;
+  border: 1px solid rgba(87, 107, 38, 0.3);
+}
+
+.cp-error {
+  background: rgba(180, 35, 24, 0.08);
+  color: #b42318;
+  border: 1px solid rgba(180, 35, 24, 0.3);
+}
+
+.cp-retry {
+  flex-shrink: 0;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}

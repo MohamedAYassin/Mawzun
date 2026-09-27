@@ -1,0 +1,35 @@
+# Copy to .dev.vars (gitignored) and adjust. Every var below also works in
+# production via wrangler.jsonc "vars" (non-secret) or `wrangler secret put`
+# (secret). All are OPTIONAL — with none set the monitor runs on the built-in
+# Mawzun defaults from src/checks.ts.
+
+# Key for POST /run and the incident endpoints (x-admin-key header).
+# Generate one: node -e "console.log(crypto.randomUUID())"
+ADMIN_KEY=change-me
+
+# ── Service list ─────────────────────────────────────────────────────────
+# CHECKS replaces the built-in defaults entirely when set (JSON array).
+# Fields: id (unique, stable — history is keyed by it), name (shown),
+# url (http/https; "" = show greyed out as not configured),
+# contains (optional substring the response body must include, on top of 200;
+# omit it or set null when any 200 counts as up).
+#
+# Default equivalent — edit freely, add or remove services:
+# CHECKS=[{"id":"site","name":"Website","url":"https://mawzun.org/"},{"id":"app","name":"Dashboard","url":"https://app.mawzun.org/"},{"id":"api","name":"API","url":"https://api.mawzun.org/","contains":"Mawzun API is running"},{"id":"ai","name":"AI API","url":"https://ai.mawzun.org/healthz","contains":"ok"},{"id":"docs","name":"Docs","url":"https://docs.mawzun.org/"},{"id":"webhook","name":"Shopify sync","url":""}]
+CHECKS=
+
+# Shortcut for the Shopify sync worker: sets the "webhook" check to
+# <url>/healthz (adds the entry if CHECKS dropped it). Empty = greyed out.
+SHOPIFY_WEBHOOK_URL=
+
+# ── Branding ─────────────────────────────────────────────────────────────
+SITE_NAME=Mawzun
+SITE_URL=https://mawzun.org
+
+# ── Telegram alerts (optional) ───────────────────────────────────────────
+# Create a bot with @BotFather for the token (keep it secret — in production
+# use `wrangler secret put TELEGRAM_BOT_TOKEN`, not this file).
+# Chat id: send your bot a message, then open
+# https://api.telegram.org/bot<TOKEN>/getUpdates and read chat.id
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=

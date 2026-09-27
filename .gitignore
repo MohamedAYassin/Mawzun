@@ -1,0 +1,106 @@
+# Monorepo root — the public Mawzun repository.
+#
+# This file is the second line of defence. Each app already ships its own
+# .gitignore, but a nested .gitignore only applies to paths beneath it, and a
+# stray file at the root (or an app whose .gitignore missed something) would
+# otherwise be published. Everything here is excluded for one of two reasons:
+# it is a secret, or it is build output that GitHub will reject or that bloats
+# the clone.
+
+# ── Secrets ──────────────────────────────────────────────────────────────────
+# Never publish these. .env.example files ARE wanted — they document the
+# configuration — so they are re-included explicitly below.
+.env
+.env.*
+!.env.example
+!.env.*.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Credential notes and anything an agent may have written down.
+*.pem
+*.key
+*-env-notes.txt
+
+# ── Dependencies ─────────────────────────────────────────────────────────────
+# ~2.5 GB across the eight apps. Committing this would exceed GitHub's file
+# limits and make the repository unusable to clone.
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build output ─────────────────────────────────────────────────────────────
+# Generated from source; never a source of truth. `dist/` and `.output/` are
+# both produced by the Vite and TypeScript builds.
+dist/
+build/
+.output/
+.vercel/
+.netlify/
+.turbo/
+*.tsbuildinfo
+
+# Wrangler (Cloudflare Workers) local state and build cache.
+.wrangler/
+.dev.vars.tmp
+
+# Prisma's generated client is committed in the Backend (it is imported at
+# runtime), so it is deliberately NOT ignored here. The migration history is
+# source and must stay.
+
+# ── Test + coverage output ───────────────────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+
+# ── Logs and local state ─────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+*.seed
+
+# Local databases and uploads.
+prisma/dev.db
+prisma/*.db-journal
+uploads/
+App_Data/
+temp/
+
+# ── Editor + OS ──────────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── Backups and scratch ──────────────────────────────────────────────────────
+*.bak
+*.orig
+*.tmp
+
+# Local dev scratch and tooling state. These hold local paths and connection
+# strings, so they must never be committed.
+.dev-env.txt
+.dev-log.txt
+.dev-err.txt
+.local.json
+
+# TLS material — never commit a private key
+*.pem
+*.key
+
+# ── Local release tooling ────────────────────────────────────────────────────
+# The internal script that populates this tree. It reads local paths and is run
+# by hand from a checkout, so it is not part of the published distribution —
+# and committing it would mean the file that writes the repository is itself
+# inside the repository it writes.
+scripts/sync.mjs

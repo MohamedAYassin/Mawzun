@@ -1,0 +1,146 @@
+// Cross-cutting platform plumbing: integrations, alerts, integration errors.
+
+enum StorePlatform {
+  CUSTOM
+  SHOPIFY
+}
+
+enum SyncErrorStatus {
+  PENDING
+  RESOLVED
+  IGNORED
+}
+
+enum NotificationCategory {
+  GENERAL
+  ORDER
+  INVENTORY
+  SYSTEM
+}
+
+model ApiKey {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name      String @db.VarChar(100)
+  // Only the hash is stored; the plaintext key is shown once at creation.
+  keyHash   String @unique @db.VarChar(128)
+  keyPrefix String @db.VarChar(20)
+
+  isActive   Boolean   @default(true)
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+
+  // Per-key AI throttle override. Null = fall back to the worker's
+  // AI_RATE_LIMIT_* env defaults. Editable from the API-keys screen.
+  rateLimitMax      Int?
+  rateLimitWindowMs Int?
+
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([keyPrefix])
+  @@map("api_keys")
+}
+
+model Notification {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Null means the notification is addressed to the whole company.
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title    String               @db.VarChar(200)
+  message  String               @default("") @db.VarChar(2000)
+  category NotificationCategory @default(GENERAL)
+  link     String?              @db.VarChar(300)
+
+  isRead Boolean   @default(false)
+  readAt DateTime?
+
+  // Low-stock anti-spam key + the product the alert is about. `action` is a
+  // synthetic key like "low-stock:reorder:<productId>:<warehouseId>"; an
+  // unread row with the same action suppresses duplicate alerts.
+  action    String? @db.VarChar(160)
+  productId String?
+
+  @@index([companyId, isRead])
+  @@index([userId, isRead])
+  @@index([action, isRead])
+  @@map("notifications")
+}
+
+// An external sales channel the company syncs with.
+model Store {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name     String        @db.VarChar(150)
+  platform StorePlatform @default(CUSTOM)
+  storeUrl String        @default("") @db.VarChar(300)
+  isActive Boolean       @default(true)
+
+  // Shopify Admin API credentials (custom app in the merchant's store).
+  // The access token must be usable to call the Admin API, so it is stored
+  // encrypted at rest with app-level AES-256-GCM keyed by APP_SECRET (see
+  // shopify_integration/src/secretbox.ts).
+  shopifyAccessToken   String  @default("") @db.VarChar(500)
+  shopifyWebhookSecret String  @default("") @db.VarChar(200)
+  shopifyShopDomain    String  @default("") @db.VarChar(200)
+  autoSyncEnabled      Boolean @default(true)
+  // Mawzun → Shopify inventory push: which Shopify location this store's
+  // stock maps to (set once per store from Admin API /locations.json).
+  shopifyLocationId    BigInt? @db.BigInt
+
+  lastSyncedAt DateTime?
+
+  syncErrors SyncError[]
+  orders     Order[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("stores")
+}
+
+model SyncError {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  storeId String?
+  store   Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  storeName    String @db.VarChar(150)
+  errorType    String @db.VarChar(100)
+  externalId   String @default("") @db.VarChar(100)
+  errorMessage String @db.VarChar(2000)
+
+  status     SyncErrorStatus @default(PENDING)
+  retryCount Int             @default(0)
+  resolvedAt DateTime?
+
+  rawJson Json?
+
+  @@index([companyId, status])
+  @@index([storeId])
+  @@map("sync_errors")
+}

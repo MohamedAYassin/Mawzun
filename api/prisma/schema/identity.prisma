@@ -1,0 +1,300 @@
+// Identity and tenancy. Everything in the product hangs off Company; a User is
+// a login that belongs to exactly one Company (or to no company, in the case of
+// platform staff).
+
+enum CompanyStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+}
+
+// Distinguishes the bundle-of-permissions roles a company can define from the
+// two that ship with every company and cannot be destroyed.
+enum RoleKind {
+  OWNER
+  ADMIN
+  STAFF
+  CUSTOM
+}
+
+// A Company is the unit of isolation. It is created implicitly at signup and
+// the person who registered becomes its single owner. It exists so that
+// business rows can key on companyId instead of on a user — a company is a
+// bucket for data, not a thing the user curates.
+model Company {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  name         String  @db.VarChar(200)
+  slug         String  @unique @db.VarChar(120)
+  legalName    String? @db.VarChar(200)
+  taxNumber    String? @db.VarChar(60)
+  commercialNo String? @db.VarChar(60)
+
+  email       String? @db.VarChar(200)
+  phoneNumber String? @db.VarChar(50)
+  website     String? @db.VarChar(300)
+  logoUrl     String? @db.VarChar(2000)
+
+  addressLine          String? @db.VarChar(300)
+  city                 String? @db.VarChar(120)
+  region               String? @db.VarChar(120)
+  countryCode          String? @db.VarChar(2)
+  postalCode           String? @db.VarChar(20)
+  currencyCode         String  @default("EGP") @db.VarChar(3)
+  timeZone             String  @default("Africa/Cairo") @db.VarChar(64)
+  locale               String  @default("ar") @db.VarChar(12)
+  fiscalYearStartMonth Int     @default(1)
+
+  status           CompanyStatus @default(ACTIVE)
+  activatedAt      DateTime?
+  suspendedAt      DateTime?
+  suspensionReason String?       @db.VarChar(500)
+
+  // THE super admin. ownerId is unique, so a company has exactly one, and
+  // Restrict means the row cannot be deleted while the company still exists.
+  // This is the invariant, enforced by the database rather than by convention.
+  ownerId String @unique
+  owner   User   @relation("CompanyOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+
+  // Named because User has two relations to Company: the one it belongs to
+  // and the one it owns.
+  users         User[]           @relation("CompanyUsers")
+  roles         Role[]
+  settings      CompanySettings?
+  auditLogs     AuditLog[]
+  apiKeys       ApiKey[]
+  notifications Notification[]
+  stores        Store[]
+  syncErrors    SyncError[]
+
+  reorderPoints        ReorderPoint[]
+  stockCounts          StockCount[]
+  stockCountItems      StockCountItem[]
+  stockOperationItems  StockOperationItem[]
+  purchaseOrderItems   PurchaseOrderItem[]
+  productionBatchItems ProductionBatchItem[]
+
+  brands                   Brand[]
+  categories               Category[]
+  products                 Product[]
+  productImages            ProductImage[]
+  taxRates                 TaxRate[]
+  uoms                     Uom[]
+  attributes               ProductAttribute[]
+  attributeValues          ProductAttributeValue[]
+  variants                 ProductVariant[]
+  productVariantAttributes ProductVariantAttribute[]
+  productMerges            ProductMerge[]
+
+  warehouses            Warehouse[]
+  storageLocations      StorageLocation[]
+  stockLevels           StockLevel[]
+  stockOperations       StockOperation[]
+  operationTypes        OperationType[]
+  inventoryTransactions InventoryTransaction[]
+
+  customers          Customer[]
+  orders             Order[]
+  coupons            Coupon[]
+  orderItems         OrderItem[]
+  orderSources       OrderSource[]
+  paymentMethods     PaymentMethod[]
+  cancelReasons      CancelReason[]
+  fulfillmentBatches FulfillmentBatch[]
+  shippingReturns    ShippingReturn[]
+
+  vendors        Vendor[]
+  purchaseOrders PurchaseOrder[]
+
+  productionBatches ProductionBatch[]
+
+  carriers     Carrier[]
+  governorates Governorate[]
+  cities       City[]
+
+  @@index([status])
+  @@index([deletedAt])
+  @@map("companies")
+}
+
+// A login. Business users always have exactly one companyId; platform staff
+// have none and see across companies.
+model User {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  email        String  @unique @db.VarChar(320)
+  passwordHash String? @db.VarChar(255)
+  fullName     String  @db.VarChar(200)
+  phoneNumber  String? @db.VarChar(50)
+  avatarUrl    String? @db.VarChar(2000)
+  jobTitle     String? @db.VarChar(120)
+
+  status          UserStatus @default(ACTIVE)
+  isPlatformAdmin Boolean    @default(false)
+
+  // Rotated on every credential change. Access tokens carry the stamp, so
+  // changing a password or disabling an account invalidates live sessions.
+  securityStamp String?   @db.VarChar(100)
+  lastLoginAt   DateTime?
+
+  companyId String?
+  company   Company? @relation("CompanyUsers", fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Reverse side of Company.owner. At most one company per user because
+  // Company.ownerId is unique.
+  ownedCompany Company? @relation("CompanyOwner")
+
+  roles               UserRole[]
+  sessions            Session[]
+  auditLogs           AuditLog[]
+  notifications       Notification[]
+  passwordResetTokens PasswordResetToken[]
+
+  createdInventoryTransactions InventoryTransaction[] @relation("InventoryTransactionActor")
+  operatedStockOperations      StockOperation[]       @relation("StockOperationActor")
+  createdApiKeys               ApiKey[]
+  createdOrders                Order[]                @relation("OrderCreator")
+
+  @@index([companyId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Role {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(500)
+  kind        RoleKind @default(CUSTOM)
+  // Seeded with the company; the UI refuses to delete these.
+  isSystem    Boolean  @default(false)
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("roles")
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+// Grants one permission key (declared in src/constants/permissions.ts) to a
+// role. Keys stay strings because the permission set is defined in code.
+model RolePermission {
+  id            String @id @default(uuid(7))
+  roleId        String
+  permissionKey String @db.VarChar(120)
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionKey])
+  @@index([permissionKey])
+  @@map("role_permissions")
+}
+
+// One row per login. Rotating a refresh token creates a new row and links the
+// old one, which lets a stolen token be replay-detected and revoked.
+model Session {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshToken String    @unique @db.VarChar(512)
+  expiresAt    DateTime
+  revokedAt    DateTime?
+
+  userAgent String? @db.VarChar(500)
+  ipAddress String? @db.VarChar(45)
+
+  // Set only on sessions minted by platform staff impersonating this user
+  // (the admin worker inserts the admin's email here). Survives refresh
+  // rotation so the app can banner every impersonated request.
+  impersonatedBy String? @db.VarChar(200)
+
+  // A session is superseded by at most one successor, so this is unique.
+  replacedById String?  @unique
+  replacedBy   Session? @relation("SessionRotation", fields: [replacedById], references: [id], onDelete: SetNull)
+  replacedFrom Session? @relation("SessionRotation")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// Append-only trail of who changed what. actorId is SetNull so the trail
+// survives a user being removed.
+model AuditLog {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  action    String  @db.VarChar(120)
+  entity    String  @db.VarChar(120)
+  entityId  String? @db.VarChar(64)
+  summary   String? @db.VarChar(500)
+  changes   Json?
+  ipAddress String? @db.VarChar(45)
+
+  @@index([companyId, createdAt])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+// Password reset flow. One live request per user: a new request is refused
+// until the previous token expires (24h), even if the token was already used —
+// so a compromised inbox can't be spammed into yielding a fresh link.
+model PasswordResetToken {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Only the SHA-256 digest is stored; the plaintext token lives solely in
+  // the emailed link (same property as password hashes / refresh tokens).
+  tokenHash String    @unique @db.VarChar(64)
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  @@index([userId, createdAt])
+  @@map("password_reset_tokens")
+}
+
+// Reverse relation on User

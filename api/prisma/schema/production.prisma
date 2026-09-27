@@ -1,0 +1,60 @@
+// Manufacturing: turning components into finished goods.
+
+enum ProductionBatchStatus {
+  DRAFT
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model ProductionBatch {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  batchNumber String @db.VarChar(40)
+
+  status ProductionBatchStatus @default(DRAFT)
+  notes  String?               @db.VarChar(1000)
+
+  startDate      DateTime?
+  completionDate DateTime?
+  cancelledAt    DateTime?
+
+  items  ProductionBatchItem[]
+  orders Order[]
+
+  @@unique([companyId, batchNumber])
+  @@index([companyId, status])
+  @@map("production_batches")
+}
+
+model ProductionBatchItem {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productionBatchId String
+  productionBatch   ProductionBatch @relation(fields: [productionBatchId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  quantity         Decimal @default(0) @db.Decimal(18, 2)
+  producedQuantity Decimal @default(0) @db.Decimal(18, 2)
+  unitCost         Decimal @default(0) @db.Decimal(18, 2)
+  notes            String? @db.VarChar(500)
+
+  @@unique([productionBatchId, productId])
+  @@index([companyId])
+  @@index([productId])
+  @@map("production_batch_items")
+}

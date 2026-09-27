@@ -1,0 +1,56 @@
+name: frontend
+
+# Path-filtered so a landing-page edit does not rebuild the dashboard.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # Required in a monorepo: the default looks for the lockfile at the
+          # repository root and would never hit the cache.
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Called directly rather than through a script: this package has no
+      # `typecheck` entry, and adding one to THIS copy would be overwritten by
+      # the next sync from the private repository. Running tsc directly keeps
+      # the check without creating a file that drifts.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      # Produces .output/ — the Cloudflare Worker bundle that `npm run deploy`
+      # publishes. A green build here means the deploy would succeed.
+      - name: Build
+        run: npm run build

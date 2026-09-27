@@ -1,0 +1,9 @@
+node_modules/
+.dev.vars
+.wrangler/
+
+# Local dev scratch: env resolution and dev logs. These hold local paths and a
+# local database URL, so they must never be committed.
+.dev-env.txt
+.dev-log.txt
+.dev-err.txt

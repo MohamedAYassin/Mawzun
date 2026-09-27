@@ -1,0 +1,30 @@
+# Local dev bindings for `npx wrangler dev`. Copy to `.dev.vars` and fill in:
+#   cp .dev.vars.example .dev.vars
+#
+# ADMIN_PASSWORD    — the single login password for the admin console.
+# HEROKU_API_TOKEN  — local dev: `heroku auth:token` output. Prod: a
+#                     long-lived token from `heroku authorizations:create`
+#                     set as a Secret in Cloudflare. Used to resolve the live
+#                     DATABASE_URL (never preset; rotation heals).
+# HEROKU_APP_NAME   — "mawzun".
+# ADMIN_EMAIL       — optional: stamps sessions."impersonatedBy" and drives
+#                     the in-app banner text for impersonated sessions.
+# LOG_DATABASE_URL  — dedicated Postgres holding ONLY error_log (schema-on-
+#                     write). Unset = breadcrumbs fall back to the main DB.
+# GRAFANA_BASE_URL  — e.g. https://<your-slug>.grafana.net — enables the
+#                     observability page's dashboard deep links.
+# GRAFANA_METRICS_PUSH_URL — informational display of the backend's push URL.
+# MAILTRAP_API_TOKEN / MAILTRAP_SENDER_EMAIL / MAILTRAP_SENDER_NAME
+#                   — email copies of notifications (legacy __ spellings also
+#                     accepted). Unset = in-app notifications only.
+ADMIN_PASSWORD=
+HEROKU_APP_NAME=mawzun
+HEROKU_API_TOKEN=
+# ADMIN_EMAIL=admin@mawzun.org
+# NOTIFY_EMAIL=1          # "1" = also email notification copies
+# APP_ORIGIN=https://app.mawzun.org   # deep links into the dashboard
+# DATABASE_SSL=1
+# DB_URL_TTL_MS=300000
+# LOG_DATABASE_URL=
+# GRAFANA_BASE_URL=https://<your-slug>.grafana.net
+# GRAFANA_METRICS_PUSH_URL=https://prometheus-prod-55-prod-gb-south-1.grafana.net/api/prom/push

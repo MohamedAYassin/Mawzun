@@ -1,0 +1,106 @@
+// Suppliers and purchase orders.
+
+// A consignment vendor stocks goods the company sells on their behalf and is
+// paid on settlement, which is why commissionRate only applies to
+// them. Previously this was a separate ConsignmentVendor table duplicating
+// every field of Vendor.
+enum VendorKind {
+  SUPPLIER
+  CONSIGNMENT
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+model Vendor {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  kind          VendorKind @default(SUPPLIER)
+  name          String     @db.VarChar(150)
+  contactPerson String     @default("") @db.VarChar(150)
+  phoneNumber   String     @default("") @db.VarChar(30)
+  email         String     @default("") @db.VarChar(150)
+  address       String     @default("") @db.VarChar(300)
+  taxNumber     String?    @db.VarChar(60)
+  notes         String     @default("") @db.VarChar(1000)
+  isActive      Boolean    @default(true)
+
+  // Consignment only.
+  commissionRate Decimal @default(0) @db.Decimal(5, 2)
+
+  purchaseOrders PurchaseOrder[]
+
+  @@index([companyId, deletedAt])
+  @@index([companyId, kind])
+  @@map("vendors")
+}
+
+model PurchaseOrder {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  orderNumber String @db.VarChar(40)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+
+  status PurchaseOrderStatus @default(DRAFT)
+  notes  String              @default("") @db.VarChar(1000)
+
+  totalAmount Decimal @default(0) @db.Decimal(18, 2)
+
+  expectedAt  DateTime?
+  receivedAt  DateTime?
+  cancelledAt DateTime?
+
+  items PurchaseOrderItem[]
+
+  @@unique([companyId, orderNumber])
+  @@index([companyId, status])
+  @@index([vendorId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  // Snapshot at the time of ordering: the product may be renamed or repriced.
+  productName      String  @db.VarChar(255)
+  skuCode          String? @db.VarChar(100)
+  quantity         Decimal @default(0) @db.Decimal(18, 2)
+  receivedQuantity Decimal @default(0) @db.Decimal(18, 2)
+  unitPrice        Decimal @default(0) @db.Decimal(18, 2)
+  total            Decimal @default(0) @db.Decimal(18, 2)
+
+  @@index([companyId])
+  @@index([purchaseOrderId])
+  @@index([productId])
+  @@map("purchase_order_items")
+}

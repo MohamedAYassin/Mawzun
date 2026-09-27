@@ -1,0 +1,340 @@
+/* Command pages (sales + inventory): dense but calm. RTL-first. */
+
+.cmd-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cmd-pills {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--bg-secondary, #f1f5f9);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.cmd-pill {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-family: var(--font-body, inherit);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cmd-pill.active {
+  background: var(--bg-primary, #fff);
+  color: var(--text-primary, #0f172a);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+}
+
+.cmd-grid-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.cmd-kpi {
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cmd-kpi-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.cmd-kpi-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.3;
+}
+
+.cmd-kpi-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.tone-good { color: #0f9d70 !important; }
+.tone-bad { color: #dc2626 !important; }
+.tone-warn { color: #b45309 !important; }
+
+.cmd-grid-2 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.cmd-panel {
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.cmd-panel-head h2 {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.15rem;
+  color: var(--text-primary, #0f172a);
+}
+
+.cmd-panel-head p {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+  margin: 0 0 1rem;
+}
+
+.cmd-empty {
+  color: var(--text-secondary, #64748b);
+  font-size: 0.85rem;
+  padding: 1rem 0;
+}
+
+/* Distribution bars */
+.cmd-hbars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.cmd-hbar-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  color: var(--text-primary, #0f172a);
+}
+
+.cmd-hbar-val {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.cmd-hbar-track {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--bg-secondary, #f1f5f9);
+  overflow: hidden;
+}
+
+.cmd-hbar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.cmd-hbar-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+}
+
+/* Trend chart */
+.cmd-legend {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 0.5rem;
+}
+
+.cmd-legend i {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 99px;
+  margin-inline-end: 0.35em;
+}
+
+.cmd-trend-svg {
+  width: 100%;
+  height: auto;
+  direction: ltr;
+}
+
+.cmd-grid {
+  stroke: var(--border-color, #e2e8f0);
+  stroke-width: 1;
+}
+
+.cmd-tick {
+  font-size: 11px;
+  fill: var(--text-secondary, #64748b);
+}
+
+.cmd-hover-line {
+  stroke: var(--text-secondary, #64748b);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+}
+
+.cmd-tip {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  font-size: 0.82rem;
+  color: var(--text-secondary, #64748b);
+  min-height: 1.6em;
+  padding-top: 0.3rem;
+}
+
+.cmd-tip strong {
+  color: var(--text-primary, #0f172a);
+}
+
+.cmd-tip-hint {
+  opacity: 0.7;
+}
+
+/* Attention rows */
+.cmd-att-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: right;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  padding: 0.7rem 0.2rem;
+  font-family: inherit;
+  color: inherit;
+}
+
+.cmd-att-row:last-child {
+  border-bottom: none;
+}
+
+.cmd-att-row.link {
+  cursor: pointer;
+}
+
+.cmd-att-row.link:hover .cmd-att-title {
+  color: var(--color-accent);
+}
+
+.cmd-att-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.cmd-att-sub {
+  font-size: 0.76rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.cmd-att-count {
+  margin-inline-start: auto;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.cmd-att-arrow {
+  color: var(--text-secondary, #64748b);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.cmd-att-items {
+  margin: 0.2rem 0 0.6rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.82rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.cmd-att-items li {
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed var(--border-color, #e2e8f0);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cmd-att-items li:last-child {
+  border-bottom: none;
+}
+
+.cmd-more {
+  font-size: 0.78rem;
+  /* --color-accent, not --accent: the latter is aliased to the accent *soft*
+     background tint, which is near-white in dark mode and vanished against the
+     panel. Text needs the accent itself. */
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.cmd-more:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
+/* Tables */
+.cmd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cmd-table th,
+.cmd-table td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cmd-table th {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+  font-weight: 700;
+}
+
+.cmd-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cmd-skeleton {
+  height: 92px;
+  border-radius: 12px;
+  /* Built from theme tokens rather than fixed light greys, so the placeholder
+     is a soft surface in both themes instead of a white block on dark. */
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-subtle) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: cmdShimmer 1.2s infinite;
+}
+
+@keyframes cmdShimmer {
+  to { background-position: -200% 0; }
+}
+
+@media (max-width: 900px) {
+  .cmd-grid-kpi { grid-template-columns: repeat(2, 1fr); }
+  .cmd-grid-2 { grid-template-columns: 1fr; }
+}

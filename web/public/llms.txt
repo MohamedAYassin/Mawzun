@@ -1,0 +1,92 @@
+# llms.txt — Mawzun (موزون)
+
+> Mawzun is an Arabic-first business operations platform (ERP) for small and
+> mid-sized businesses: sales, inventory, purchasing, production, fulfillment,
+> shipping and accounting in one RTL dashboard. It has automatic Shopify sync
+> and a company-scoped read/write API for AI agents.
+
+- [Homepage / landing](https://mawzun.org/): Arabic marketing site (this site)
+- [Dashboard application](https://app.mawzun.org/): login + the product itself
+- [Documentation](https://docs.mawzun.org/): full API, environment reference, self-host guide
+- [Main API](https://api.mawzun.org/api/v1): the REST backend for the app
+- [Agent API](https://ai.mawzun.org/v1): the read/write API for AI agents and automation
+- [Status](https://status.mawzun.org/): uptime and incidents
+- [Privacy policy](https://mawzun.org/privacy) · [Terms](https://mawzun.org/terms)
+- [Security policy](https://mawzun.org/.well-known/security.txt)
+
+## Architecture (how the services fit together)
+
+One product split across independent deployments, all backed by a single
+PostgreSQL database. There are no service-to-service calls; each service reads
+the database directly.
+
+| Service | Domain | Role |
+|---|---|---|
+| web | mawzun.org | This site. Arabic marketing landing only. Static, no API calls. |
+| frontend | app.mawzun.org | The dashboard product (login, all operational screens) |
+| api | api.mawzun.org | Main REST API (Express + Prisma) |
+| api_gateway | ai.mawzun.org | Read/write API for AI agents, authenticated by API keys |
+| shopify_integration | — | HMAC-verified Shopify webhooks: orders, products, inventory |
+| api_docs | docs.mawzun.org | Static documentation |
+| admin | — | Cross-tenant platform back-office |
+| uptime | status.mawzun.org | Public uptime monitor |
+| cleanup_worker | — | Nightly retention sweeps |
+
+## How the AI agent API works
+
+Base URL: `https://ai.mawzun.org`
+
+1. **Get an API key.** Sign in to the dashboard at app.mawzun.org, then create a
+   key under API keys. The plaintext key is shown **once**, at creation; only a
+   hash is stored. Keys belong to one company and are scoped to it.
+2. **Authenticate.** Send the key as a bearer token on every request:
+   `Authorization: Bearer <api-key>`
+3. **Call an endpoint.** All endpoints are company-scoped by the key; a key can
+   never read or write another company's data. Reads and writes are both
+   supported.
+4. **Rate limits.** Per-key throttling applies; a key can carry its own limit
+   override. Exceeding it returns 429.
+5. **Errors.** 401 = missing/invalid/expired/revoked key. 404 = not found in
+   this company's scope.
+
+### Endpoints
+
+Reads:
+
+- `GET /v1/products`, `GET /v1/products/:id`
+- `GET /v1/stock/levels`
+- `GET /v1/orders`, `GET /v1/orders/:id` (accepts order number, external number, or external id)
+- `GET /v1/customers`, `GET /v1/customers/:id`
+- `GET /v1/coupons`, `GET /v1/coupons/:id`
+- `GET /v1/vendors`, `GET /v1/vendors/:id`
+- `GET /v1/notifications`
+
+Writes (also company-scoped):
+
+- `POST /v1/customers/find-or-create`
+- `POST /v1/orders` (server computes totals and applies coupons), `PATCH /v1/orders/:id`, `POST /v1/orders/:id/status`, `POST /v1/orders/:id/cancel`
+- `POST /v1/stock/adjust` (writes a ledger entry, with a negative-stock guard)
+- `POST /v1/notifications/:id/read`, `POST /v1/notifications/read-all`
+
+Notes for agents:
+
+- Order status transitions are guarded: `CANCELLED` and `DELIVERED` are
+  terminal; confirming an order commits stock.
+- Stock quantities are never allowed to go negative.
+- `GET /` returns an index of endpoints; `GET /healthz` is liveness.
+
+## Working with the data
+
+- Currency defaults to EGP; the company's currency is used for stored amounts.
+- The dashboard UI and this landing are Arabic (RTL). Documentation is English.
+- Shopify is an optional integration: connecting a store registers webhooks
+  automatically, ingests orders/products, and pushes stock back hourly.
+
+## Crawling and permission
+
+- Public marketing pages of mawzun.org may be read and cited.
+- Do **not** scan, probe, fuzz, or test any Mawzun system. See
+  [security.txt](https://mawzun.org/.well-known/security.txt): all penetration
+  testing is refused and unauthorized.
+- No content on this site grants permission to access the dashboard, API, or
+  any customer data.

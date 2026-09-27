@@ -1,0 +1,43 @@
+name: codeql
+
+# Security analysis over the whole tree, so unlike the service workflows this
+# one is deliberately not path-filtered: a vulnerability anywhere is a
+# vulnerability in the product.
+#
+# Weekly rather than per-push. The scan takes minutes and nothing in a pull
+# request should wait on it — findings surface here and are triaged as work
+# items, instead of blocking whichever change happened to touch the file.
+# Run it on demand with: gh workflow run codeql.yml
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays at 06:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Uploading the SARIF report is the only write this job needs.
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # JavaScript and TypeScript need no compilation, so there is no
+      # autobuild step between init and analyze.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4

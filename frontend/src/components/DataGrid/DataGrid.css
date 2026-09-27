@@ -1,0 +1,182 @@
+.dg-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.dg-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* .dg-btn base + :hover now live in MawzunUI.css (used outside DataGrid too) */
+
+.dg-btn-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+/* The native chevron sits in the inline-end gutter, so reserve it explicitly:
+   without this the digits hug the text edge and read as off-centre. */
+.dg-pagesize {
+  height: 2.05rem;
+  padding-block: 0;
+  padding-inline: 0.85rem 1.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-align: center;
+  text-align-last: center;
+  cursor: pointer;
+}
+
+.dg-panel {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.dg-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.dg-filter-row select,
+.dg-filter-row input {
+  padding: 0.38rem 0.55rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.dg-filter-row input { min-width: 10rem; }
+
+.dg-remove {
+  border: none;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-radius: var(--radius-sm);
+  width: 1.8rem;
+  height: 1.8rem;
+  cursor: pointer;
+}
+
+.dg-remove:hover {
+  background: var(--color-danger);
+  color: var(--color-accent-contrast);
+}
+
+.dg-panel-footer { display: flex; gap: 0.4rem; }
+
+.dg-view-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.dg-view-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.dg-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 0.6rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+}
+
+.dg-bulk-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* tr.dg-group-header td now lives in MawzunUI.css (used by transaction pages) */
+
+/* Quick search across every visible column. Sits first in the toolbar so it
+   reads as the primary control, matching the search box on the other lists. */
+.dg-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1 1 220px;
+  min-width: 0;
+  max-width: 320px;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.dg-search:focus-within {
+  border-color: var(--border-color-focus);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+.dg-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.dg-search input::placeholder {
+  color: var(--text-muted);
+}
+
+/* The browser's own clear button duplicates ours and ignores the theme. */
+.dg-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.dg-search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dg-search-clear:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}

@@ -1,0 +1,57 @@
+name: uptime
+
+# Path-filtered so a change to one Worker does not rebuild the other seven
+# services. See api.yml for the reasoning.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "uptime/**"
+      - ".github/workflows/uptime.yml"
+  pull_request:
+    paths:
+      - "uptime/**"
+      - ".github/workflows/uptime.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: uptime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: uptime
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # Required in a monorepo: the default looks for the lockfile at the
+          # repository root and would never hit the cache.
+          cache: npm
+          cache-dependency-path: uptime/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # `wrangler deploy --dry-run` bundles the Worker exactly as a deploy
+      # would, without publishing. It catches a broken import or a bad binding
+      # that a typecheck alone would miss.
+      - name: Build (wrangler dry run)
+        run: npm run build
+
+      - name: Test
+        run: npm test

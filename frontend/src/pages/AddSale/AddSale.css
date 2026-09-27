@@ -1,0 +1,238 @@
+/* ===== AddSale Multi-Step Wizard ===== */
+
+/* Form layout primitives (.io-editor-field, .io-multi-editor,
+   .io-multi-editor-full, .pb-input) live in styles/MawzunUI.css so every
+   wizard shares them — they used to be defined here only, which left the
+   other wizard pages (add-product, exchange/return requests) with no grid,
+   no field stacking and an intrinsic-width input. */
+
+/* Custom Select */
+/* Nested items section (order items) */
+.io-nested-form-section {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+  background: var(--color-white);
+}
+/* .io-nested-row base now lives in MawzunUI.css (shared across pages) */
+.io-nested-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.io-nested-row > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.io-nested-row > * label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+/* .io-nested-row-btn base now lives in MawzunUI.css */
+
+/* Step indicator */
+.as-step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  direction: rtl;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.as-step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.625rem;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.as-step-item.as-step-active {
+  background: var(--color-accent-soft);
+}
+
+.as-step-item:not(:last-child)::after {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 2px;
+  background: var(--border-color);
+  margin-right: 0.5rem;
+}
+
+.as-step-item.as-step-done:not(:last-child)::after {
+  background: var(--color-accent);
+}
+
+.as-step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all 0.2s;
+  border: 2px solid var(--border-color);
+}
+
+.as-step-item.as-step-active .as-step-circle {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border-color: var(--color-accent);
+}
+
+.as-step-item.as-step-done .as-step-circle {
+  background: var(--color-accent-hover);
+  color: var(--color-white);
+  border-color: var(--color-accent-hover);
+}
+
+.as-step-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.as-step-item.as-step-active .as-step-label {
+  font-weight: 700;
+}
+
+/* Navigation buttons.
+   The element also carries .io-multi-editor-full, so it inherits
+   grid-column: 1 / -1 from the grid. Keep that span (the divider rule must run
+   the full card width) and let the flex line place the button. In this RTL
+   document flex-end resolves to the inline-end = LEFT edge, which is why the
+   button looked marooned in the empty strip; flex-start parks it at the right. */
+.as-nav-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  grid-column: 1 / -1;
+}
+
+/* Review grid */
+.as-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.as-review-section {
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.as-review-section h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.as-review-section div {
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-primary);
+}
+
+.as-review-section div span {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-left: 0.5rem;
+}
+
+.as-review-section-full {
+  grid-column: 1 / -1;
+}
+
+.as-review-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.as-review-table th,
+.as-review-table td {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.as-review-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.io-button-ghost {
+  border-color: var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.io-button-ghost:hover:not(:disabled) {
+  background: var(--bg-secondary);
+}
+
+.io-button-danger {
+  background: var(--text-secondary);
+  color: var(--color-white);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.1);
+}
+
+.io-button-danger:hover:not(:disabled) {
+  background: #444444;
+}
+
+@media (max-width: 640px) {
+  .as-step-indicator {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .as-step-item:not(:last-child)::after {
+    display: none;
+  }
+  .as-step-label {
+    font-size: 0.8rem;
+  }
+  .as-review-grid {
+    grid-template-columns: 1fr;
+  }
+  .io-multi-editor {
+    grid-template-columns: 1fr;
+  }
+  .io-nested-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .io-nested-row > * {
+    flex: none;
+  }
+  .io-nested-row-btn {
+    margin-top: 0;
+  }
+  .pb-input {
+    font-size: 16px;
+  }
+}

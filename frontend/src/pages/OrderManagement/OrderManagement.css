@@ -1,0 +1,153 @@
+/* ===== OrderManagement Page Styles ===== */
+
+/* Filter bar (matches AccountingOverview/ConfirmationOverview style) */
+.om-filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.om-filter-bar input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+}
+
+.om-filter-bar select {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  background: var(--bg-primary);
+}
+
+/* Table font */
+.om-table-scroll .io-table td,
+.om-table-scroll .io-table th {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+/* Row hover */
+.om-row:hover {
+  background: var(--bg-canvas);
+}
+
+/* Expanded content */
+.om-expanded-row td {
+  padding: 0 !important;
+}
+
+.om-expanded-content {
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.om-expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.om-expanded-section {
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.om-expanded-section h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.4rem;
+}
+
+.om-expanded-section div {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.om-expanded-section div span {
+  font-weight: 600;
+  margin-left: 0.3rem;
+}
+
+.om-expanded-full {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+}
+
+.om-expanded-full:first-of-type {
+  margin-top: 0;
+}
+
+.om-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.om-items-table th,
+.om-items-table td {
+  padding: 0.45rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.om-items-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.7rem;
+}
+
+.om-shortage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.om-needs-mfg {
+  color: #cc0000;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.om-available {
+  color: #2d7d2d;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .om-expanded-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .om-expanded-grid {
+    grid-template-columns: 1fr;
+  }
+}

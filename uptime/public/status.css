@@ -1,0 +1,60 @@
+:root{--bg:#f7f9fb;--card:#fff;--border:#e3e8ef;--text:#0f172a;--muted:#475569;--accent:#3b82f6;
+--ok:#0f9d70;--okbg:#e6f7f1;--bad:#dc2f42;--badbg:#fdeaec;--warn:#b7791f;--warnbg:#fdf5e4}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Manrope','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:780px;margin:0 auto;padding:2rem 1.25rem 3rem}
+.brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1.75rem}
+.brand a.brand-link{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.brand img.logo{width:40px;height:40px}
+.brand img.word{height:28px;width:auto}
+.brand span{margin-inline-start:auto;color:var(--muted);font-size:.85rem}
+.banner{border-radius:14px;padding:1rem 1.25rem;font-weight:700;margin-bottom:1.25rem;font-family:'Sora',sans-serif}
+.banner.ok{background:var(--okbg);color:var(--ok)}.banner.bad{background:var(--badbg);color:var(--bad)}
+.uptime{border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1.25rem;background:var(--card)}
+.uptime-label{color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.05em}
+.uptime-value{font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;line-height:1.1}
+.uptime-hint{color:var(--muted);font-size:.78rem;margin-top:.2rem}
+.svc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;margin-bottom:1rem}
+.svc.disabled{opacity:.55}
+.svc-head{display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.svc-head a{margin-inline-start:auto;color:var(--muted);font-size:.8rem;text-decoration:none}
+.svc-head a:hover{color:var(--accent)}
+.meta{color:var(--muted);font-size:.82rem}
+.dot{width:.7em;height:.7em;border-radius:99px;display:inline-block}
+.dot.up{background:var(--ok)}.dot.down{background:var(--bad)}.dot.unknown{background:#cbd5e1}
+.bars{display:flex;gap:2px;margin-top:.7rem}
+.bars i{flex:1;height:26px;border-radius:2px;background:var(--bg-subtle,#e8ecf1);position:relative;cursor:default}
+.bars i.up{background:var(--ok)}.bars i.degraded{background:#eab308}.bars i.down{background:var(--bad)}.bars i.nodata{background:#e8ecf1}
+.bars i:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:.72rem;font-style:normal;padding:.3rem .55rem;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none}
+.bars i.tip-l:hover::after{left:0;transform:none}
+.bars i.tip-r:hover::after{left:auto;right:0;transform:none}
+h2.sec{font-family:'Sora',sans-serif;font-size:1.05rem;margin:2rem 0 .9rem}
+.inc{background:var(--card);border:1px solid var(--border);border-inline-start:4px solid var(--warn);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.8rem}
+.inc.resolved{border-inline-start-color:var(--ok)}
+.inc-head{display:flex;gap:.6rem;align-items:center}
+.inc-head strong{font-size:.95rem}
+.pill{margin-inline-start:auto;font-size:.72rem;font-weight:700;background:var(--warnbg);color:var(--warn);border-radius:99px;padding:.15em .8em;text-transform:uppercase;letter-spacing:.04em}
+.inc.resolved .pill{background:var(--okbg);color:var(--ok)}
+.inc p{margin:.4rem 0;font-size:.88rem;color:var(--muted);white-space:pre-wrap}
+.empty{color:var(--muted);font-size:.88rem}
+footer{color:var(--muted);font-size:.8rem;text-align:center;margin-top:2.5rem}
+footer a{color:var(--muted)}
+
+/* Mobile: stack the service header, tighten spacing, let the URL wrap */
+@media (max-width: 480px) {
+  .wrap{padding:1.25rem .9rem 2rem}
+  .brand{gap:.5rem}
+  .brand img.logo{width:32px;height:32px}
+  .brand img.word{height:22px}
+  .banner{padding:.8rem 1rem;font-size:.95rem}
+  .uptime{padding:.9rem 1rem}
+  .uptime-value{font-size:1.5rem}
+  .svc{padding:.9rem .9rem;border-radius:12px}
+  .svc-head{gap:.4rem .5rem}
+  .svc-head a{flex-basis:100%;margin-inline-start:0;order:4;word-break:break-all}
+  .meta{font-size:.78rem}
+  .bars{gap:1px;margin-top:.6rem}
+  .bars i{height:20px}
+  h2.sec{margin:1.5rem 0 .8rem}
+  .inc{padding:.8rem .85rem}
+}

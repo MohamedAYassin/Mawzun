@@ -1,0 +1,47 @@
+/* AccountingOverview Page Styles */
+.accounting-badge {
+  position: relative;
+}
+
+.ao-filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.ao-filter-bar input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+}
+
+.ao-filter-bar select,
+.ao-filter-bar button {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  background: var(--bg-primary);
+}
+
+.ao-filter-bar button.ao-shortage-active {
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.ao-table-scroll .io-table td,
+.ao-table-scroll .io-table th {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}

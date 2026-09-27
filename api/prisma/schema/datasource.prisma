@@ -1,0 +1,24 @@
+// Mawzun ERP — Prisma schema (multi-file layout).
+//
+// Every file in prisma/schema/ is one bounded domain. Prisma merges them at
+// load time, so a model may reference a model declared in another file.
+//
+// Conventions used throughout:
+//   * Primary keys are UUIDv7 — time-ordered, so index locality is comparable
+//     to a sequence while IDs stay unguessable across companies.
+//   * Table names are mapped to snake_case plural. Column names use Prisma's
+//     camelCase default and are always quoted in raw SQL.
+//   * Every table that holds company data carries a non-nullable companyId
+//     with a real foreign key (onDelete: Cascade) and an index. Company
+//     isolation is therefore a database guarantee, not an application hope.
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Prisma 7 requires an explicit output path. Paths are relative to this file,
+// so ../../ reaches the backend root.
+generator client {
+  provider = "prisma-client"
+  output   = "../../src/generated/prisma"
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mawzun-status",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "rules": [
+    // Bundle the status-page HTML shell as text (imported by src/render.ts)
+    { "type": "Text", "globs": ["**/*.html"] }
+  ],
+  "assets": {
+    "directory": "./public"
+  },
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  // Worker logs + traces to Cloudflare's own store, matching the other
+  // services. This Worker is the one that TELLS you something is down, so an
+  // error inside it is the failure that hides every other failure — without
+  // this block that error existed only in a live tail.
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      // Fill both after: npx wrangler d1 create mawzun-status
+      "database_name": "",
+      "database_id": ""
+    }
+  ],
+  "vars": {
+    // Full service list as a JSON array — set it and the built-in Mawzun
+    // defaults in src/checks.ts are replaced. See .dev.vars.example for the
+    // exact shape. Can also be stored as a secret:
+    //   npx wrangler secret put CHECKS
+    "CHECKS": "",
+    // Shortcut: overrides the "webhook" check url with <url>/healthz so you
+    // don't have to rewrite CHECKS just for the Shopify sync endpoint.
+    "SHOPIFY_WEBHOOK_URL": "",
+    // Branding on the page (defaults: Mawzun / https://mawzun.org)
+    "SITE_NAME": "Mawzun",
+    "SITE_URL": "https://mawzun.org",
+    // Optional Telegram alerts on down/recovered. Set the chat id here and
+    // the bot token as a secret:
+    //   npx wrangler secret put TELEGRAM_BOT_TOKEN
+    "TELEGRAM_CHAT_ID": ""
+  }
+}

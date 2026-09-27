@@ -1,0 +1,26 @@
+{
+  "name": "موزون | Mawzun",
+  "short_name": "موزون",
+  "description": "نظام عربي لإدارة المبيعات والمخازن والمشتريات والشحن والحسابات من لوحة واحدة.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/og.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

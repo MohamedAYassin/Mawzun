@@ -1,0 +1,110 @@
+name: api
+
+# Only runs when the backend or this workflow changes.
+#
+# The path filter matters in a monorepo: without it, editing the landing page
+# would spin up a PostgreSQL container and run 117 database tests. With it, a
+# pull request only pays for the services it touched.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api/**"
+      - ".github/workflows/api.yml"
+  pull_request:
+    paths:
+      - "api/**"
+      - ".github/workflows/api.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: api-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # The suite is not a mock suite: it talks to real PostgreSQL and asserts on
+    # row-level security, which only exists in the database. A mocked client
+    # would pass whether or not the policies were there.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: mawzun
+          POSTGRES_PASSWORD: mawzun
+          POSTGRES_DB: mawzun_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mawzun -d mawzun_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      # Owner role: migrations, seeding, identity resolution.
+      DIRECT_DATABASE_URL: postgresql://mawzun:mawzun@127.0.0.1:5432/mawzun_test
+      # Restricted role: created by the provisioning step, subject to RLS.
+      DATABASE_URL: postgresql://mawzun_app:mawzun_app@127.0.0.1:5432/mawzun_test
+      # Secrets only need to satisfy the schema's minimum lengths.
+      JWT_KEY: ci-only-jwt-key-not-a-real-secret
+      APP_SECRET: ci-only-app-secret-not-real
+      # ─────────────────────────────────────────────────────────────────────
+      # WE DO NOT TEST REDIS.
+      #
+      # There is no local Redis; the real REDIS_URL points at a hosted
+      # third-party instance we do not own. No Redis service is started here
+      # and none should ever be added: a test that reaches a remote cache is a
+      # remote call with assertions after it, not a test.
+      #
+      # Empty on purpose. An unconfigured REDIS_URL makes every limiter fail
+      # open — the documented behaviour for a cache that is not there. CI would
+      # still fail if a test tried to reach Redis anyway: tests/setup.mjs
+      # blocks sockets to 6379/6380 outright, so a regression is a clear error
+      # rather than a flaky pass.
+      # ─────────────────────────────────────────────────────────────────────
+      REDIS_URL: ""
+
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: api/.nvmrc
+          # Cache key includes the lockfile path, which is required in a
+          # monorepo: the default looks for package-lock.json at the root and
+          # would silently never hit.
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+
+      - name: Provision the restricted app role
+        run: node scripts/provision-db.mjs
+
+      # The build is the gate that has to pass before anything else.
+      - name: Build
+        run: npm run build
+
+      # After the build on purpose: a compile error should fail fast rather
+      # than after a slower test run.
+      - name: Test
+        run: npm test

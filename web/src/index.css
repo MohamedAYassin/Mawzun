@@ -1,0 +1,153 @@
+:root {
+  /* ── Typography: Sora headings, Manrope UI, IBM Plex Sans Arabic for Arabic ── */
+  /* The "… Fallback" families are metric-matched @font-face rules (styles.css)
+     that sit between the webfont and the system stack, so the async font swap
+     does not reflow the layout. */
+  /* The "Arabic Fallback" family is a metric-matched @font-face rule in
+     styles.css, so the async font swap does not reflow the layout. */
+  --font-heading: 'Sora', 'Arabic Fallback', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+  --font-body: 'Manrope', 'Arabic Fallback', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+
+  /* ── Cloud White palette ── */
+  --bg-primary: #ffffff;
+  --bg-canvas: #f7f9fb;
+  --bg-secondary: #f1f4f8;
+  --bg-subtle: #e8ecf1;
+  --border-color: #e3e8ef;
+  --border-strong: #cfd8e3;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #5b6b7f;
+
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-soft: #eaf2ff;
+
+  --color-white: #ffffff;
+  --text-muted-light: #cbd5e1;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
+  --shadow-pop: 0 12px 32px -8px rgba(15, 23, 42, 0.18);
+  --backdrop-blur: blur(8px);
+  --transition: 150ms ease;
+
+  /* ── Consistent Font Size Scale ── */
+  --fs-xs:   0.72rem;  /* badges, table headers, tiny labels */
+  --fs-sm:   0.8rem;   /* captions, secondary text, nav items, inputs */
+  --fs-base: 0.86rem;  /* body, buttons, table cells, primary text */
+  --fs-md:   0.95rem;  /* emphasized body, form inputs */
+  --fs-lg:   1.1rem;   /* card titles, section headings */
+
+}
+
+
+/* Global element resets — strip browser default white backgrounds */
+button {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+input,
+textarea,
+select {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* =====================================================
+   Global element resets
+   ===================================================== */
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Hide scrollbars globally */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+/* ── Dark mode: token-level overrides, toggled via <html data-theme="dark"> ── */
+[data-theme='dark'] {
+  --bg-primary: #101725;
+  --bg-canvas: #0b111d;
+  --bg-secondary: #172030;
+  --bg-subtle: #1d2839;
+  --border-color: #26324a;
+  --border-strong: #33415e;
+
+  --text-primary: #e7edf6;
+  --text-secondary: #9fb0c7;
+  --text-muted: #8496ac;
+
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-accent-soft: rgba(59, 130, 246, 0.14);
+
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-pop: 0 12px 32px -8px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme='dark'] body,
+[data-theme='dark'] .landing {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+/* In dark mode the brand wordmark switches to the white variant everywhere. */
+[data-theme='dark'] img.brand-wordmark,
+[data-theme='dark'] img.brand-inline {
+  content: url('/mawzun_white.svg');
+}
+
+/* The "mawzun" name is always the SVG, never plain text. */
+body img.brand-wordmark {
+  display: block;
+  height: 1.35em;
+  width: auto;
+}
+
+body img.brand-inline {
+  display: inline-block;
+  height: 1.15em;
+  width: auto;
+}

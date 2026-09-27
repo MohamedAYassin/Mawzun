@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{SITE_NAME}} status</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/status.css">
+</head><body><div class="wrap">
+<header class="brand"><a class="brand-link" href="{{SITE_URL}}"><img class="logo" src="/logo_scale.svg" alt="{{SITE_NAME}}" width="40" height="40">
+<img class="word" src="/mawzun_black.svg" alt="{{SITE_NAME}}"></a><span>status</span></header>
+<div class="banner {{BANNER_CLASS}}">{{BANNER_TEXT}}</div>
+{{UPTIME_BLOCK}}
+{{SERVICES}}
+<h2 class="sec">Incidents</h2>
+{{INCIDENTS}}
+{{NO_INCIDENTS}}
+<footer>Checked every 5 minutes · <a href="/api/status">JSON</a></footer></div></body></html>

@@ -1,0 +1,336 @@
+// Warehouses, stock, and every movement that changes stock.
+
+enum StockOperationStatus {
+  DRAFT
+  PENDING
+  READY
+  DONE
+  CANCELLED
+}
+
+enum ReservationMethod {
+  MANUAL
+  AT_CONFIRMATION
+  AT_FULFILLMENT
+}
+
+// Every reason stock can change. Used by InventoryTransaction so movements are
+// self-describing instead of relying on a bare integer.
+enum InventoryTransactionType {
+  OPENING
+  PURCHASE
+  SALE
+  RETURN_IN
+  RETURN_OUT
+  TRANSFER_IN
+  TRANSFER_OUT
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  PRODUCTION_IN
+  PRODUCTION_OUT
+  SCRAP
+  COUNT_VARIANCE
+}
+
+enum StockCountStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Warehouse {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name        String  @db.VarChar(255)
+  code        String? @db.VarChar(100)
+  address     String? @db.VarChar(500)
+  city        String? @db.VarChar(120)
+  countryCode String? @db.VarChar(2)
+  phoneNumber String? @db.VarChar(50)
+  notes       String? @db.VarChar(1000)
+  isActive    Boolean @default(true)
+  isDefault   Boolean @default(false)
+
+  storageLocations   StorageLocation[]
+  reorderPoints      ReorderPoint[]
+  orders             Order[]
+  fulfillmentBatches FulfillmentBatch[]
+  stockCounts        StockCount[]
+  outgoingOperations StockOperation[]   @relation("OperationSourceWarehouse")
+  incomingOperations StockOperation[]   @relation("OperationTargetWarehouse")
+
+  @@unique([companyId, name])
+  @@index([companyId, deletedAt])
+  @@map("warehouses")
+}
+
+model StorageLocation {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  name     String  @db.VarChar(255)
+  code     String? @db.VarChar(100)
+  notes    String? @db.VarChar(1000)
+  isActive Boolean @default(true)
+
+  parentId String?
+  parent   StorageLocation?  @relation("LocationTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children StorageLocation[] @relation("LocationTree")
+
+  maxWeightKg Decimal? @db.Decimal(18, 2)
+  maxVolumeM3 Decimal? @db.Decimal(18, 2)
+
+  stockLevels           StockLevel[]
+  inventoryTransactions InventoryTransaction[]
+  stockCounts           StockCount[]
+  stockCountItems       StockCountItem[]
+
+  @@index([companyId])
+  @@index([warehouseId])
+  @@index([parentId])
+  @@map("storage_locations")
+}
+
+// Quantity of a product at a location. This is the live stock figure;
+// InventoryTransaction is the immutable history of how it got there.
+model StockLevel {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  storageLocationId String
+  storageLocation   StorageLocation @relation(fields: [storageLocationId], references: [id], onDelete: Cascade)
+
+  onHand   Decimal @default(0) @db.Decimal(18, 2)
+  reserved Decimal @default(0) @db.Decimal(18, 2)
+
+  @@unique([productId, storageLocationId])
+  @@index([companyId])
+  @@index([storageLocationId])
+  @@map("stock_levels")
+}
+
+// Per-warehouse min/max for a product. Drives the low-stock alerts.
+model ReorderPoint {
+  id String @id @default(uuid(7))
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  minStockLevel   Decimal @default(0) @db.Decimal(18, 2)
+  maxStockLevel   Decimal @default(0) @db.Decimal(18, 2)
+  reorderQuantity Decimal @default(0) @db.Decimal(18, 2)
+
+  @@unique([productId, warehouseId])
+  @@index([companyId])
+  @@map("reorder_points")
+}
+
+// A named, configurable type of movement (receipt, delivery, transfer...).
+// Companies define their own; a few are seeded.
+model OperationType {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name               String            @db.VarChar(150)
+  code               String            @db.VarChar(100)
+  description        String?           @db.VarChar(500)
+  requiresValidation Boolean           @default(false)
+  sequencePrefix     String            @default("OP") @db.VarChar(30)
+  reservationMethod  ReservationMethod @default(MANUAL)
+  isActive           Boolean           @default(true)
+  nextSequence       Int               @default(1)
+
+  operations StockOperation[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("operation_types")
+}
+
+model StockOperation {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  operationNumber String        @db.VarChar(100)
+  operationTypeId String
+  operationType   OperationType @relation(fields: [operationTypeId], references: [id], onDelete: Restrict)
+
+  fromWarehouseId String?
+  fromWarehouse   Warehouse? @relation("OperationSourceWarehouse", fields: [fromWarehouseId], references: [id], onDelete: SetNull)
+
+  toWarehouseId String?
+  toWarehouse   Warehouse? @relation("OperationTargetWarehouse", fields: [toWarehouseId], references: [id], onDelete: SetNull)
+
+  reference String?              @db.VarChar(150)
+  status    StockOperationStatus @default(DRAFT)
+  notes     String?              @db.VarChar(1000)
+
+  executedAt   DateTime?
+  executedById String?
+  executedBy   User?     @relation("StockOperationActor", fields: [executedById], references: [id], onDelete: SetNull)
+
+  items StockOperationItem[]
+
+  @@unique([companyId, operationNumber])
+  @@index([companyId, status])
+  @@index([operationTypeId])
+  @@map("stock_operations")
+}
+
+model StockOperationItem {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  stockOperationId String
+  stockOperation   StockOperation @relation(fields: [stockOperationId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  quantity     Decimal @default(0) @db.Decimal(18, 2)
+  doneQuantity Decimal @default(0) @db.Decimal(18, 2)
+  unitCost     Decimal @default(0) @db.Decimal(18, 2)
+
+  @@unique([stockOperationId, productId, variantId])
+  @@index([companyId])
+  @@index([productId])
+  @@map("stock_operation_items")
+}
+
+// Immutable ledger of stock movements. Rows are never updated or deleted.
+model InventoryTransaction {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  storageLocationId String
+  storageLocation   StorageLocation @relation(fields: [storageLocationId], references: [id], onDelete: Restrict)
+
+  transactionType InventoryTransactionType
+  quantity        Decimal                  @db.Decimal(18, 2)
+  balanceAfter    Decimal                  @default(0) @db.Decimal(18, 2)
+  unitCost        Decimal                  @default(0) @db.Decimal(18, 2)
+  reason          String?                  @db.VarChar(500)
+  referenceType   String?                  @db.VarChar(60)
+  referenceId     String?                  @db.VarChar(64)
+  referenceNumber String?                  @db.VarChar(100)
+
+  actorId String?
+  actor   User?   @relation("InventoryTransactionActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt])
+  @@index([productId])
+  @@index([storageLocationId])
+  @@index([referenceType, referenceId])
+  @@map("inventory_transactions")
+}
+
+// A stock-taking sheet: count what is physically present, compare against the
+// system figure, then post the variance as adjustment movements.
+model StockCount {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  referenceNumber String @db.VarChar(60)
+
+  warehouseId String?
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+
+  storageLocationId String?
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id], onDelete: SetNull)
+
+  status StockCountStatus @default(DRAFT)
+  reason String?          @db.VarChar(1000)
+  notes  String?          @db.VarChar(1000)
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  items StockCountItem[]
+
+  @@unique([companyId, referenceNumber])
+  @@index([companyId, status])
+  @@map("stock_counts")
+}
+
+model StockCountItem {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  stockCountId String
+  stockCount   StockCount @relation(fields: [stockCountId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  storageLocationId String?
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id], onDelete: SetNull)
+
+  systemQuantity  Decimal  @default(0) @db.Decimal(18, 2)
+  countedQuantity Decimal? @db.Decimal(18, 2)
+  variance        Decimal  @default(0) @db.Decimal(18, 2)
+
+  @@unique([stockCountId, productId, storageLocationId])
+  @@index([companyId])
+  @@index([productId])
+  @@map("stock_count_items")
+}

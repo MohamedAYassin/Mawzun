@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mawzun-app-shopify-webhook",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "3425ee24fee340ea8d9300ff19319c52"
+    }
+  ],
+  "triggers": {
+    // Hourly inventory push Mawzun → Shopify (scheduled handler in index.ts).
+    "crons": ["0 * * * *"]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true
+    }
+  },
+  "vars": {
+    // DB URL is fetched from Heroku's own Platform API at startup — NOT preset,
+    // and NEVER via a sibling service — so rotation heals automatically.
+    "HEROKU_APP_NAME": "mawzun",
+    // Mapped SKUs pushed to Shopify per hourly inventory-push run.
+    "INVENTORY_PUSH_SKUS_PER_RUN": "250"
+    // Secrets to set once: npx wrangler secret put HEROKU_API_TOKEN
+    //   (create it with: heroku authorizations:create -d "mawzun-workers-db-url")
+  }
+}

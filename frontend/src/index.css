@@ -1,0 +1,406 @@
+@import './styles/MawzunUI.css';
+
+:root {
+  /* ── Typography: Sora headings, Manrope UI, IBM Plex Sans Arabic for Arabic ── */
+  --font-heading: 'Sora', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+  --font-body: 'Manrope', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+
+  /* ── Cloud White palette ── */
+  --bg-primary: #ffffff;
+  --bg-canvas: #f6f8fb;
+  --bg-secondary: #eef3f8;
+  --bg-subtle: #e5ebf3;
+  --border-color: #dbe4ee;
+  --border-strong: #c5d2e1;
+  --border-color-focus: #2563eb;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: #eaf2ff;
+  --color-accent-ring: rgba(59, 130, 246, 0.18);
+
+  --color-success: #0f9d70;
+  --color-success-soft: #e6f7f1;
+  --color-warning: #b7791f;
+  --color-warning-soft: #fdf5e4;
+  --color-danger: #dc2f42;
+  --color-danger-hover: #b91c1c;
+  --color-danger-soft: #fdeaec;
+
+  --overlay-scrim: rgba(15, 23, 42, 0.42);
+
+  --color-white: #ffffff;
+  --text-light: #ffffff;
+  --text-muted-light: #cbd5e1;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px -14px rgba(15, 23, 42, 0.18);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-pop: 0 12px 32px -8px rgba(15, 23, 42, 0.18);
+  --sidebar-shadow: -8px 0 24px rgba(15, 23, 42, 0.06);
+  /* Cast at the edge of a horizontally scrollable strip to show there is more
+     content off-screen. Black in both themes; only the weight changes. */
+  --scroll-shadow: rgba(0, 0, 0, 0.16);
+  --backdrop-blur: blur(8px);
+  --transition: 150ms ease;
+
+  /* ── Consistent Font Size Scale ── */
+  --fs-xs:   0.72rem;  /* badges, table headers, tiny labels */
+  --fs-sm:   0.8rem;   /* captions, secondary text, nav items, inputs */
+  --fs-base: 0.86rem;  /* body, buttons, table cells, primary text */
+  --fs-md:   0.95rem;  /* emphasized body, form inputs */
+  --fs-lg:   1.1rem;   /* card titles, section headings */
+  --fs-xl:   1.35rem;  /* drawer titles, sidebar logo, medium headings */
+  --fs-2xl:  1.7rem;   /* page titles, metric values */
+  --fs-3xl:  2.25rem;  /* hero headings */
+  --fs-display: 5rem;  /* display numbers (404, etc.) */
+
+  /* Shared action-button accent (legacy names kept, retuned to the new palette).
+     These ALIAS the semantic tokens above rather than hardcoding light values, so
+     every consumer of var(--ss-*) follows the theme automatically. Hardcoding them
+     here is what made dark mode show white cards with light text on top. */
+  --ss-moss: var(--color-accent);
+  --ss-moss-dark: var(--color-accent-hover);
+  --ss-ink: var(--text-primary);
+  --ss-ink-soft: var(--text-secondary);
+  --ss-terracotta: var(--color-danger);
+  --ss-line: var(--border-color);
+  --ss-paper: var(--bg-primary);
+  --ss-sand: var(--bg-secondary);
+}
+
+
+/* Global element resets — strip browser default white backgrounds */
+button {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+input,
+textarea,
+select {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* =====================================================
+   Shared .io-button system (used across multiple pages)
+   ===================================================== */
+.io-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.io-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.io-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.io-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+:where(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.io-button-primary {
+  background: var(--ss-moss);
+  color: var(--color-accent-contrast);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.15);
+}
+
+.io-button-primary:hover:not(:disabled) {
+  background: var(--ss-moss-dark);
+}
+
+.io-button-secondary {
+  border-color: var(--border-strong);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.io-button-secondary:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Hide scrollbars globally */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body, .layout-content, .sidebar-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   Responsive Site-Wide Layout Utilities (Mobile-First & Clean Desktop Rules)
+   ========================================================================== */
+
+/* Page container */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  direction: rtl;
+  text-align: right;
+  min-height: 100%;
+}
+
+/* Responsive Table Wrapper (Enables smooth horizontal scroll on mobile) */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Force a reasonable min-width on tables on mobile to prevent columns squishing */
+@media (max-width: 768px) {
+  .table-responsive-container table {
+    min-width: 750px !important;
+  }
+}
+
+/* Responsive Auto-Filling Grids */
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.auto-grid-lg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 480px) {
+  .auto-grid, .auto-grid-lg {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Responsive Tab Bar Navigation (Scrollable horizontal flex list on mobile) */
+.responsive-tabs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-tabs-nav {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    gap: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .responsive-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .responsive-tabs-nav > button,
+  .responsive-tabs-nav > a {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-right: none !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 8px 8px 0 0 !important;
+    margin-bottom: -0.5rem !important;
+  }
+  /* Active tab indicator on bottom instead of right border */
+  .responsive-tabs-nav .active-tab-class {
+    border-right: none !important;
+    border-bottom: 3px solid var(--color-accent) !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* Responsive Action Toolbars */
+.responsive-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+@media (max-width: 576px) {
+  .responsive-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .responsive-toolbar > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Search Input responsive width limit */
+.ss-search-input {
+  max-width: 240px;
+}
+@media (max-width: 576px) {
+  .ss-search-input {
+    max-width: 100% !important;
+  }
+}
+
+/* ── Images ───────────────────────────────────────────────────────────────
+ *
+ * Every image is bounded. An <img> with no size renders at the file's natural
+ * dimensions, so a single large upload overflows whatever it sits in — and a
+ * table cell cannot clip it, so the whole row and page blow out.
+ *
+ * max-width alone is not enough: it stops horizontal overflow but leaves a
+ * tall image (a portrait photo) free to push the layout down. The height cap
+ * is what keeps a row a row.
+ *
+ * No object-fit here on purpose: a global `cover` would crop any image whose
+ * box aspect differs from the file's, which silently cuts the subject out of a
+ * picture. Sizing boxes that want a crop set it themselves.
+ */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* A hard ceiling so one large upload cannot push the page down. Scoped to the
+   content areas rather than every <img> on the site, because the auth pages
+   deliberately use a tall illustration. */
+.view-container img,
+.ss-data-surface img,
+.io-data-surface img,
+.pb-data-surface img,
+.ss-module img {
+  max-height: 320px;
+}
+
+/* Product/table thumbnails: this class had NO rule at all, so a product photo
+   rendered at its natural size inside the table cell. */
+.io-thumbnail {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ── Dark mode: token-level overrides, toggled via <html data-theme="dark"> ── */
+[data-theme='dark'] {
+  --bg-primary: #101725;
+  --bg-canvas: #0b111d;
+  --bg-secondary: #172030;
+  --bg-subtle: #1d2839;
+  --border-color: #2a3850;
+  --border-strong: #3a4b68;
+  --border-color-focus: #3b82f6;
+
+  --text-primary: #e7edf6;
+  --text-secondary: #9fb0c7;
+  --text-muted: #8da0ba;
+
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: rgba(59, 130, 246, 0.14);
+  --color-accent-ring: rgba(59, 130, 246, 0.28);
+
+  --color-success-soft: rgba(15, 157, 112, 0.16);
+  --color-warning-soft: rgba(183, 121, 31, 0.16);
+  --color-danger-hover: #ef4444;
+  --color-danger-soft: rgba(220, 47, 66, 0.16);
+
+  --overlay-scrim: rgba(2, 6, 23, 0.72);
+
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 12px 32px -8px rgba(0, 0, 0, 0.7);
+  --sidebar-shadow: -8px 0 24px rgba(0, 0, 0, 0.35);
+  /* Black over a dark canvas needs more weight to read at all; the light-mode
+     0.16 is tuned against white and disappears here. */
+  --scroll-shadow: rgba(0, 0, 0, 0.55);
+}
+
+[data-theme='dark'] body,
+[data-theme='dark'] .landing,
+[data-theme='dark'] .split-layout {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] img[class*='RemoteImage'],
+[data-theme='dark'] .ss-file-preview,
+[data-theme='dark'] .io-thumbnail {
+  filter: brightness(0.92);
+}
+
+/* In dark mode the brand wordmark switches to the white variant everywhere. */
+[data-theme='dark'] img.brand-wordmark,
+[data-theme='dark'] img.brand-inline {
+  content: url('/mawzun_white.svg');
+}

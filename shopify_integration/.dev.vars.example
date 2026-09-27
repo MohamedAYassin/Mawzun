@@ -1,0 +1,17 @@
+# Local dev bindings for `npx wrangler dev`. Copy to `.dev.vars` and fill in:
+#   cp .dev.vars.example .dev.vars
+#
+# WITHOUT the Hyperdrive binding (local dev), this worker resolves the live
+# DATABASE_URL from the Heroku Platform API.
+#
+# HEROKU_APP_NAME  — "mawzun"
+# HEROKU_API_TOKEN — local dev: `heroku auth:token` output.
+# APP_SECRET       — REQUIRED: the HKDF key that unseals Shopify access
+#                    tokens stored in the DB (same value as the backend's).
+# DATABASE_SSL     — "1" forces TLS (auto-detected from URL sslmode usually).
+# DB_URL_TTL_MS    — resolver cache TTL (default 300000 = 5 min).
+HEROKU_APP_NAME=mawzun
+HEROKU_API_TOKEN=
+APP_SECRET=
+# DATABASE_SSL=1
+# DB_URL_TTL_MS=300000

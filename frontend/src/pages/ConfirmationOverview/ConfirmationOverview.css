@@ -1,0 +1,34 @@
+/* ===== ConfirmationOverview Page Styles =====
+ *
+ * Only the modal lives here now. The co-* table/button/expanded-row classes
+ * this file used to own were used by OTHER pages that never imported this file,
+ * so they rendered unstyled on a cold load (refresh / deep link). They now live
+ * in styles/MawzunUI.css — the globally-loaded sheet — under the "Pass 3"
+ * section. Do not move them back here.
+ */
+
+/* Modal overlay */
+.co-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.co-modal {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.co-modal h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}

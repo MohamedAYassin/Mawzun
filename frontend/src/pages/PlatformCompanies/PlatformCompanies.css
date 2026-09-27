@@ -1,0 +1,118 @@
+/* The platform company directory.
+ *
+ * The `ss-*` classes it shares with the settings screens come from
+ * `../SystemSettings/SystemSettings.css`; everything here is what the
+ * directory itself adds: the page frame, the status filter, the paging row and
+ * the change-status dialog.
+ */
+
+.pc-page {
+  direction: rtl;
+  min-height: 100vh;
+  padding: 1.25rem 1rem 2.5rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.pc-sub {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+/* The status filter is a select that sits in the table toolbar, so it takes
+   the toolbar's height rather than the full-width editor-field sizing. */
+.pc-status-filter {
+  width: auto;
+  min-width: 9rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.pc-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+/* Status change dialog ---------------------------------------------------- */
+
+.pc-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.pc-dialog {
+  direction: rtl;
+  width: 100%;
+  max-width: 30rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-pop);
+  font-family: var(--font-body);
+}
+
+.pc-dialog h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pc-dialog-company {
+  margin: 0.25rem 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.pc-required {
+  color: #b42318;
+}
+
+.pc-optional {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.pc-hint {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.pc-warning {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(180, 138, 36, 0.35);
+  border-radius: var(--radius-md);
+  background: rgba(180, 138, 36, 0.1);
+  color: #7a5a12;
+  font-size: 0.75rem;
+  line-height: 1.7;
+}
+
+.pc-error {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(180, 35, 24, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(180, 35, 24, 0.08);
+  color: #b42318;
+  font-size: 0.78rem;
+}

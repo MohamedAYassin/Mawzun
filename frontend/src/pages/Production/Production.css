@@ -1,0 +1,511 @@
+/* Production page CSS styles — inherits the Cloud White design tokens */
+.pb-container {
+  direction: rtl;
+  min-height: 100%;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+
+.pb-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 0 0 1.7rem;
+  padding: 0.4rem 0.25rem;
+}
+
+.pb-page-title {
+  margin: 0;
+  color: var(--ss-ink);
+  font-family: var(--font-heading);
+  font-size: clamp(1.65rem, 2.4vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.pb-page-sub {
+  max-width: 600px;
+  margin: 0.55rem 0 0;
+  color: var(--ss-ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.pb-body {
+  display: grid;
+  grid-template-columns: minmax(215px, 0.32fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.15rem;
+}
+
+.pb-content {
+  min-width: 0;
+}
+
+.pb-module {
+  min-height: 450px;
+  padding: clamp(1rem, 2.3vw, 1.7rem);
+  border: 1px solid var(--ss-line);
+  border-radius: 20px;
+  background: var(--ss-paper);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.055);
+}
+
+.pb-module-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.pb-module-heading h2 {
+  margin: 0;
+  color: var(--ss-ink);
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.pb-module-heading p {
+  margin: 0.3rem 0 0;
+  color: var(--ss-ink-soft);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+.pb-module-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ss-line);
+}
+
+.pb-count-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.15rem;
+  margin-left: auto;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--ss-line);
+  border-radius: 999px;
+  background: var(--bg-canvas);
+  color: var(--ss-ink-soft);
+  font-size: 0.7rem;
+}
+
+.pb-count-chip strong {
+  color: var(--ss-ink);
+  font-size: 0.95rem;
+}
+
+.pb-search {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--ss-line);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  height: 2.25rem;
+}
+
+.pb-search input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ss-ink);
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.pb-multi-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0.9rem 0 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+  animation: pb-in 180ms ease both;
+}
+
+@keyframes pb-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.pb-multi-editor-full {
+  grid-column: 1 / -1;
+}
+
+.pb-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pb-editor-field label {
+  color: var(--ss-ink-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.pb-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--ss-line);
+  border-radius: 9px;
+  outline: none;
+  background: var(--bg-primary);
+  color: var(--ss-ink);
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: right;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.pb-input:focus { border-color: rgba(0, 0, 0, 0.64); box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); }
+
+.pb-data-surface {
+  margin-top: 1rem;
+  border: 1px solid var(--ss-line);
+  border-radius: 14px;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.pb-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.pb-table th {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--ss-line);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.pb-table td {
+  padding: 0.88rem 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--ss-ink-soft);
+  font-size: 0.8rem;
+}
+
+.pb-status-badge {
+  display: inline-flex;
+  padding: 0.28rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.pb-status-planned { background: var(--color-accent-soft); color: var(--color-accent-hover); border: 1px solid #c7d0f5; }
+.pb-status-inprogress { background: var(--color-warning-soft); color: var(--color-warning); border: 1px solid #ffe2a3; }
+.pb-status-completed { background: var(--color-success-soft); color: var(--color-success); border: 1px solid #aee6ba; }
+.pb-status-cancelled { background: var(--color-danger-soft); color: var(--color-danger); border: 1px solid #f6bcbc; }
+
+@media (max-width: 620px) {
+  .pb-body { grid-template-columns: 1fr; }
+  .pb-multi-editor { grid-template-columns: 1fr; }
+  .pb-data-surface { overflow-x: auto; }
+}
+
+/* Per-row action buttons — keep them side by side even on narrow screens */
+.pb-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+/* Real buttons (replaced the old link-style .forgot-btn) */
+.pb-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.8rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--ss-line);
+  border-radius: 7px;
+  background: var(--bg-primary);
+  color: var(--ss-ink-soft);
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.pb-quick-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.pb-quick-btn:disabled { opacity: 0.48; cursor: not-allowed; }
+
+/* Active state mirrors the status colors so it's obvious which is selected */
+.pb-quick-btn-active { font-weight: 800; }
+.pb-quick-btn-planned   { background: var(--color-accent-soft); color: var(--color-accent-hover); border-color: #c7d0f5; }
+.pb-quick-btn-inprogress { background: var(--color-warning-soft); color: var(--color-warning); border-color: #ffe2a3; }
+.pb-quick-btn-completed { background: var(--color-success-soft); color: var(--color-success); border-color: #aee6ba; }
+.pb-quick-btn-cancelled { background: var(--color-danger-soft); color: var(--color-danger); border-color: #f6bcbc; }
+
+.pb-quick-btn-edit   { color: var(--ss-ink); }
+.pb-quick-btn-edit:hover:not(:disabled) { background: var(--bg-subtle); }
+
+.pb-quick-btn-delete { color: var(--color-danger); border-color: #f0c5c5; }
+.pb-quick-btn-delete:hover:not(:disabled) { background: var(--color-danger-soft); }
+
+/* On mobile, keep the action buttons on one horizontal line instead of
+   stacking them vertically inside the cramped table cell. */
+@media (max-width: 620px) {
+  .pb-row-actions {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.3rem;
+  }
+  .pb-quick-btn {
+    white-space: nowrap;
+    padding: 0.2rem 0.45rem;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   io-* helpers — Production shares the coffee-brown design system with the
+   Inventory module. These rules are duplicated here so this page is fully
+   self-contained and its buttons/badges/nav render correctly even if the
+   Inventory page (whose CSS originally defined them) is never visited.
+   ------------------------------------------------------------------------- */
+
+.io-page-kicker,
+.io-editor-kicker,
+.io-nav-label {
+  margin: 0 0 0.42rem;
+  color: var(--ss-moss);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.io-nav-card {
+  position: sticky;
+  top: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--ss-line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.055);
+}
+
+.io-nav-label {
+  padding: 1rem 1rem 0.55rem;
+  color: var(--ss-ink-soft);
+  letter-spacing: 0.06em;
+}
+
+.io-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem 0.55rem 0.8rem;
+}
+
+.io-nav-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.65rem;
+  padding: 0.75rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ss-ink-soft);
+  font-family: inherit;
+  text-align: right;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.io-nav-btn:hover {
+  border-color: var(--ss-line);
+  background: var(--ss-sand);
+  color: var(--ss-ink);
+  transform: translateX(-2px);
+}
+
+.io-nav-btn-active {
+  border-color: rgba(0, 0, 0, 0.24);
+  background: var(--ss-moss);
+  color: var(--color-white);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.io-nav-btn-active:hover {
+  border-color: rgba(0, 0, 0, 0.3);
+  background: var(--ss-moss-dark);
+  color: var(--color-white);
+}
+
+.io-nav-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--ss-moss);
+}
+
+.io-nav-btn-active .io-nav-icon {
+  background: rgba(255, 255, 255, 0.17);
+  color: var(--color-white);
+}
+
+.io-nav-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.io-nav-text strong { font-size: 0.8rem; font-weight: 700; }
+.io-nav-text small { color: inherit; font-size: 0.7rem; opacity: 0.68; }
+
+.io-nav-arrow {
+  font-size: 1rem;
+  opacity: 0.5;
+  transition: transform 160ms ease;
+}
+
+.io-nav-btn:hover .io-nav-arrow,
+.io-nav-btn-active .io-nav-arrow {
+  transform: translateX(-3px);
+  opacity: 1;
+}
+
+.io-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 0.75rem;
+  margin: 1.15rem 0 0.8rem;
+}
+
+.io-item-name { color: var(--ss-ink); font-weight: 700; }
+.io-related-badge {
+  display: inline-flex;
+  padding: 0.28rem 0.5rem;
+  border-radius: 6px;
+  background: var(--border-strong);
+  color: var(--ss-moss-dark);
+  font-size: 0.7rem;
+}
+
+.io-empty-state {
+  display: flex;
+  min-height: 230px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.io-empty-mark {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  margin-bottom: 0.7rem;
+  border-radius: 15px;
+  background: var(--bg-subtle);
+  color: var(--ss-moss);
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+}
+
+.io-empty-state h3 { margin: 0; color: var(--ss-ink); font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; }
+.io-empty-state p { margin: 0.4rem 0 0.9rem; color: var(--text-muted); font-size: 0.8rem; }
+
+.io-nested-form-section {
+  border: 1px solid var(--ss-line);
+  background: rgba(255, 255, 255, 0.4);
+  padding: 0.75rem;
+  border-radius: 10px;
+  margin-top: 0.5rem;
+}
+
+/* .io-nested-row / .io-nested-row-btn bases live in MawzunUI.css */
+.io-nested-row > * { flex: 1; }
+
+.io-spinner { display: inline-block; }
+
+/* Buttons — previously relied on InventoryOverview.css being loaded, which
+   left them unstyled (browser-default pure-white) on a fresh session. */
+.io-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.io-button:hover:not(:disabled) { transform: translateY(-1px); }
+.io-button:disabled { cursor: not-allowed; opacity: 0.48; }
+
+.io-button-primary {
+  background: var(--ss-moss);
+  color: var(--color-white);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.2);
+}
+.io-button-primary:hover:not(:disabled) { background: var(--ss-moss-dark); }
+
+.io-button-secondary {
+  border-color: rgba(0, 0, 0, 0.3);
+  background: var(--bg-secondary);
+  color: var(--ss-moss-dark);
+}
+.io-button-secondary:hover:not(:disabled) { background: var(--border-color); }
+
+.io-button-ghost {
+  border-color: var(--ss-line);
+  background: transparent;
+  color: var(--ss-ink-soft);
+}
+.io-button-ghost:hover:not(:disabled) { background: var(--ss-sand); color: var(--ss-ink); }
+
+.io-button-danger {
+  background: var(--ss-terracotta);
+  color: var(--color-white);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.15);
+}
+.io-button-danger:hover:not(:disabled) { background: #444444; }
+
+/* Shared animations referenced by this page */
+@keyframes io-spin { to { transform: rotate(360deg); } }
+/* .animate-fade-in now lives in MawzunUI.css (every page uses it) */

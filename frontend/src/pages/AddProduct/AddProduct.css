@@ -1,0 +1,152 @@
+.ap-step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  direction: rtl;
+}
+
+.ap-step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.ap-step-item.ap-step-active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.ap-step-item:not(:last-child)::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 2px;
+  background: var(--border-color);
+  margin-right: 1rem;
+}
+
+.ap-step-item.ap-step-done:not(:last-child)::after {
+  background: var(--color-accent);
+}
+
+.ap-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all 0.2s;
+  border: 2px solid var(--border-color);
+}
+
+.ap-step-item.ap-step-active .ap-step-circle {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border-color: var(--color-accent);
+}
+
+.ap-step-item.ap-step-done .ap-step-circle {
+  background: var(--color-accent-hover);
+  color: var(--color-white);
+  border-color: var(--color-accent-hover);
+}
+
+.ap-step-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.ap-step-item.ap-step-active .ap-step-label {
+  font-weight: 700;
+}
+
+/* The element also carries .io-multi-editor-full, so it inherits
+   grid-column: 1 / -1 from the form grid. In this RTL document
+   justify-content: flex-end resolves to the inline-END = LEFT edge, which
+   stranded التالي at the left of a full-width empty strip; flex-start parks
+   it at the trailing right edge, matching add-sale. */
+.ap-nav-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  grid-column: 1 / -1;
+}
+
+.ap-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.ap-review-section {
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.ap-review-section h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.ap-review-section div {
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-primary);
+}
+
+.ap-review-section div span {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-left: 0.5rem;
+}
+
+.ap-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ap-file-preview {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+@media (max-width: 640px) {
+  .ap-step-indicator {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .ap-step-item:not(:last-child)::after {
+    display: none;
+  }
+  .ap-step-label {
+    font-size: 0.8rem;
+  }
+  .ap-review-grid {
+    grid-template-columns: 1fr;
+  }
+}

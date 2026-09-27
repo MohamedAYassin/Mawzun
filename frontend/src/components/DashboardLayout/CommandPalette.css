@@ -1,0 +1,112 @@
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-scrim);
+  backdrop-filter: var(--backdrop-blur);
+  z-index: 200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh 1rem 1rem;
+  direction: rtl;
+}
+
+.cmdk-panel {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+.cmdk-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.cmdk-input-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.cmdk-input-row kbd {
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.cmdk-results {
+  overflow-y: auto;
+  padding: 0.4rem;
+}
+
+.cmdk-result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  text-align: right;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.cmdk-result:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.cmdk-result.active {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.cmdk-result.active:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.cmdk-result-icon {
+  display: inline-flex;
+  opacity: 0.8;
+}
+
+.cmdk-result-label {
+  flex: 1;
+  font-weight: 600;
+}
+
+.cmdk-result-module {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.cmdk-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  padding: 1.5rem 0;
+}

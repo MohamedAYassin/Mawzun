@@ -1,0 +1,346 @@
+// Customers, orders, and the post-order lifecycle (fulfilment, returns).
+
+enum OrderType {
+  SALE
+  RETURN
+  EXCHANGE
+}
+
+// The confirmation and shipping pipeline. Values mirror the queue used by the
+// confirmation, shipping and returns dashboards.
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  POSTPONED
+  CANCELLED
+  NO_ANSWER
+  DELIVERED
+  RETURNED
+  NOT_DELIVERED
+  ON_THE_WAY
+  RETURNED_TO_WAREHOUSE
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum FulfillmentBatchType {
+  PICKING
+  PACKING
+}
+
+enum FulfillmentBatchStatus {
+  NEW
+  DONE
+  CANCELLED
+}
+
+model Customer {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name         String  @db.VarChar(255)
+  phoneNumber1 String  @db.VarChar(50)
+  phoneNumber2 String? @db.VarChar(50)
+  email        String? @db.VarChar(200)
+  address      String? @db.VarChar(500)
+  notes        String? @db.VarChar(1000)
+  isActive     Boolean @default(true)
+
+  orders          Order[]
+  shippingReturns ShippingReturn[]
+
+  @@index([companyId, deletedAt])
+  @@index([companyId, phoneNumber1])
+  @@map("customers")
+}
+
+model OrderSource {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name     String  @db.VarChar(255)
+  isActive Boolean @default(true)
+
+  orders Order[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("order_sources")
+}
+
+// How a customer pays for an order. Payout methods (how the company pays a
+// vendor) are a separate model so the two cannot be confused.
+model PaymentMethod {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name     String  @db.VarChar(255)
+  isActive Boolean @default(true)
+
+  orders Order[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("payment_methods")
+}
+
+model CancelReason {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name     String  @db.VarChar(255)
+  isActive Boolean @default(true)
+
+  orders Order[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("cancel_reasons")
+}
+
+// Coupon codes: company-level discount codes redeemable at order creation.
+// Percentage or fixed amount, optional minimum-order floor, usage cap and
+// expiry. Redemption counting happens in the order-create path.
+model Coupon {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Code as the customer types it — upper-cased by the API for matching.
+  code            String       @db.VarChar(60)
+  discountType    DiscountType @default(PERCENTAGE)
+  // PERCENTAGE: 0-100. FIXED: amount in company currency.
+  value           Decimal      @default(0) @db.Decimal(18, 2)
+  // Order total must reach this before the coupon applies (null = no floor).
+  minOrderTotal   Decimal?
+  // Total times this coupon may be redeemed (null = unlimited).
+  maxRedemptions  Int?
+  redemptionCount Int          @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean      @default(true)
+
+  orders Order[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("coupons")
+}
+
+model Order {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Human-facing number. Unique within a company, not globally.
+  orderNumber String      @db.VarChar(40)
+  type        OrderType   @default(SALE)
+  status      OrderStatus @default(NEW)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  // External channel identity. Null for orders created inside Mawzun;
+  // set for orders ingested from a connected store (idempotent ingestion:
+  // unique per company+store+externalId, so webhook replays never duplicate).
+  storeId        String?
+  store          Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  externalId     String? @db.VarChar(100)
+  externalNumber String? @db.VarChar(100)
+
+  // Set when this order was produced by returning or exchanging another.
+  originalOrderId String?
+  originalOrder   Order?  @relation("OrderLineage", fields: [originalOrderId], references: [id], onDelete: Restrict)
+  derivedOrders   Order[] @relation("OrderLineage")
+
+  carrierId String?
+  carrier   Carrier? @relation(fields: [carrierId], references: [id], onDelete: SetNull)
+
+  shippingGovernorateId String?
+  shippingGovernorate   Governorate? @relation(fields: [shippingGovernorateId], references: [id], onDelete: Restrict)
+
+  cityId String?
+  city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
+
+  shippingCost Decimal @default(0) @db.Decimal(18, 2)
+
+  orderSourceId String?
+  orderSource   OrderSource? @relation(fields: [orderSourceId], references: [id], onDelete: Restrict)
+
+  paymentMethodId String?
+  paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+
+  warehouseId String?
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+
+  productionBatchId String?
+  productionBatch   ProductionBatch? @relation(fields: [productionBatchId], references: [id], onDelete: SetNull)
+
+  cancelReasonId String?
+  cancelReason   CancelReason? @relation(fields: [cancelReasonId], references: [id], onDelete: Restrict)
+
+  detailedAddress String? @db.VarChar(1000)
+  notes           String? @db.VarChar(1000)
+  hasShortage     Boolean @default(false)
+
+  discountPercentage Decimal @default(0) @db.Decimal(5, 2)
+  orderPrice         Decimal @default(0) @db.Decimal(18, 2)
+  orderActualPrice   Decimal @default(0) @db.Decimal(18, 2)
+  // ISO 4217 code the order was placed in. Defaults to EGP (the company's
+  // base currency); ingested Shopify orders carry their own store currency.
+  currencyCode       String  @default("EGP") @db.VarChar(3)
+
+  // Coupon applied at creation. The code is snapshotted so order history
+  // survives coupon deletion (couponId is SET NULL on delete).
+  couponId   String?
+  coupon     Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCode String? @db.VarChar(60)
+
+  confirmedAt DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
+
+  // Who booked the order. Kept on deletion so a removed employee does not
+  // take the company's sales history with them, and nullable for orders
+  // created by an integration or an import.
+  createdById String?
+  createdBy   User?   @relation("OrderCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  items           OrderItem[]
+  shippingReturns ShippingReturn[]
+
+  @@unique([companyId, orderNumber])
+  @@unique([companyId, storeId, externalId])
+  @@index([companyId, createdById])
+  @@index([companyId, status])
+  @@index([companyId, createdAt])
+  @@index([customerId])
+  @@index([carrierId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid(7))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  quantity          Decimal @default(0) @db.Decimal(18, 2)
+  confirmedQuantity Decimal @default(0) @db.Decimal(18, 2)
+
+  unitPrice              Decimal      @default(0) @db.Decimal(18, 2)
+  itemDiscountPercentage Decimal      @default(0) @db.Decimal(5, 2)
+  itemDiscountAmount     Decimal      @default(0) @db.Decimal(18, 2)
+  discountType           DiscountType @default(PERCENTAGE)
+
+  unitCost           Decimal @default(0) @db.Decimal(18, 2)
+  needsManufacturing Boolean @default(false)
+
+  @@index([companyId])
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model FulfillmentBatch {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name String @db.VarChar(60)
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+
+  type   FulfillmentBatchType   @default(PICKING)
+  status FulfillmentBatchStatus @default(NEW)
+
+  completedAt DateTime?
+
+  @@unique([companyId, name])
+  @@index([companyId, status])
+  @@map("fulfillment_batches")
+}
+
+// Carrier-side return: what came back from the customer, in what condition,
+// and whether the money was collected.
+model ShippingReturn {
+  id        String    @id @default(uuid(7))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  companyId String  @default(dbgenerated("current_setting('app.company_id', true)::uuid"))
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  referenceNumber String @db.VarChar(60)
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  carrierId String?
+  carrier   Carrier? @relation(fields: [carrierId], references: [id], onDelete: SetNull)
+
+  qtyReturnedGood    Int @default(0)
+  qtyReturnedDamaged Int @default(0)
+  qtyReturnedMissing Int @default(0)
+
+  amountTotal        Decimal @default(0) @db.Decimal(18, 2)
+  shippingCost       Decimal @default(0) @db.Decimal(18, 2)
+  amountWithShipping Decimal @default(0) @db.Decimal(18, 2)
+
+  returnsCollected   Boolean   @default(false)
+  returnsCollectedAt DateTime?
+  notes              String?   @db.VarChar(500)
+
+  @@unique([companyId, referenceNumber])
+  @@index([companyId])
+  @@index([orderId])
+  @@map("shipping_returns")
+}

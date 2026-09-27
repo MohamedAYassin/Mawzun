@@ -1,0 +1,40 @@
+# Local development variables for the cleanup worker.
+#
+# Copy to `.dev.vars` (gitignored) and fill in. `wrangler dev` reads this file.
+#
+# NOTE: `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` is NOT read
+# from here — wrangler takes it from the process environment, so export it in
+# your shell before `wrangler dev`:
+#
+#   export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgresql://..."
+#
+# (Strip the `?schema=public` suffix and URL-encode the password; miniflare's
+# `new URL()` rejects both.)
+
+# ── Database ────────────────────────────────────────────────────────────────
+# Production uses the Hyperdrive binding. Locally the worker resolves the URL
+# live from Heroku's Platform API instead, so it needs these two.
+#
+# IMPORTANT: this worker needs the database OWNER credential, not the
+# restricted app role. Row-level security is enabled on every table it touches,
+# and the restricted role sees ZERO rows without a company context — every
+# sweep would report "0 deleted" and look clean while the tables grew forever.
+# The worker refuses to run in that state rather than lie about it.
+HEROKU_APP_NAME="mawzun"
+HEROKU_API_TOKEN=""
+
+# Set to 1 for managed Postgres that requires TLS. Optional; the URL's own
+# sslmode wins when present.
+# DATABASE_SSL=1
+
+# ── Manual run guard ────────────────────────────────────────────────────────
+# Required for POST /run. The cron path does not use it.
+ADMIN_KEY=""
+
+# ── Retention windows, in days ──────────────────────────────────────────────
+# These override the defaults in wrangler.jsonc. 0 disables a sweep entirely.
+# SESSION_RETENTION_DAYS="45"
+# PASSWORD_RESET_RETENTION_DAYS="1"
+# NOTIFICATION_RETENTION_DAYS="14"
+# SYNC_ERROR_RETENTION_DAYS="90"
+# AUDIT_LOG_RETENTION_DAYS="365"
