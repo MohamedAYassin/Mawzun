@@ -95,11 +95,14 @@ export default function Register({ navigate }: RegisterProps) {
           <div className="auth-form-row">
             <label className="auth-field">
               كلمة المرور
-              <input className="ss-input" type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+              {/* min/max mirror SignupSchema in the API: the browser should
+                  refuse what the server would refuse, so the user gets the
+                  rule instead of a round-trip and a rejected request. */}
+              <input className="ss-input" type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} maxLength={128} />
             </label>
             <label className="auth-field">
               تأكيد كلمة المرور
-              <input className="ss-input" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} />
+              <input className="ss-input" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={8} maxLength={128} />
             </label>
           </div>
           <Turnstile onToken={setTurnstileToken} />
