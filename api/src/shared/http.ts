@@ -126,13 +126,23 @@ export function handler<Req extends Request = Request>(
   };
 }
 
-/** Turns a Zod failure into a 422 with per-field detail. */
+/**
+ * Turns a Zod failure into a 422 with per-field detail.
+ *
+ * A single failed field promotes its own message to the top level, because that
+ * message IS the reason the request was refused — "the password must be at
+ * least 8 characters" is actionable, "the entered data is invalid" is not, and
+ * clients render the top-level message. With several failures at once there is
+ * no single reason to report, so the general message stays and `details`
+ * carries each field.
+ */
 export function toValidationError(err: unknown): ValidationError | null {
   if (err && typeof err === "object" && "issues" in err) {
     const issues = (err as { issues: { path: PropertyKey[]; message: string }[] }).issues;
+    const details = issues.map((i) => ({ field: i.path.join("."), message: i.message }));
     return new ValidationError(
-      "البيانات المدخلة غير صالحة.",
-      issues.map((i) => ({ field: i.path.join("."), message: i.message }))
+      issues.length === 1 ? issues[0].message : "البيانات المدخلة غير صالحة.",
+      details
     );
   }
   return null;

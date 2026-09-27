@@ -121,6 +121,60 @@ describe("signup starts a session and a company", () => {
   });
 });
 
+describe("a rejected field explains itself", () => {
+  // A single bad field is the common case, and its message IS the reason the
+  // request was refused. Reporting the generic "البيانات المدخلة غير صالحة."
+  // makes the user guess which field is wrong — which is exactly what happened
+  // for a weak password on signup, where the schema's Arabic rule existed but
+  // never reached the screen.
+
+  test("a weak password reports the rule, not a generic message", async () => {
+    const response = await api({
+      path: "/api/v1/auth/signup",
+      method: "POST",
+      body: {
+        companyName: "Too Weak Co",
+        fullName: "Weak Password",
+        email: `weak-${randomUUID().slice(0, 8)}@test.local`,
+        // 6 characters: below the schema's minimum of 8.
+        password: "abc123",
+      },
+    });
+
+    assert.equal(response.status, 422, `body: ${JSON.stringify(response.body)}`);
+    assert.equal(response.body.code, "VALIDATION_ERROR");
+    assert.equal(
+      response.body.message,
+      "كلمة المرور يجب ألا تقل عن ٨ أحرف.",
+      "the password rule must reach the client, not a generic message"
+    );
+    // The field is still named, so a form can attach the error to its input
+    // instead of showing it above the whole form.
+    assert.deepEqual(response.body.details, [
+      { field: "password", message: "كلمة المرور يجب ألا تقل عن ٨ أحرف." },
+    ]);
+  });
+
+  test("several bad fields fall back to the general message", async () => {
+    const response = await api({
+      path: "/api/v1/auth/signup",
+      method: "POST",
+      body: { companyName: "x", fullName: "y", email: "not-an-email", password: "abc" },
+    });
+
+    assert.equal(response.status, 422, `body: ${JSON.stringify(response.body)}`);
+    assert.equal(
+      response.body.message,
+      "البيانات المدخلة غير صالحة.",
+      "with several failures at once there is no single reason to report"
+    );
+    assert.ok(
+      Array.isArray(response.body.details) && (response.body.details as unknown[]).length > 1,
+      "every failed field must still be listed in details"
+    );
+  });
+});
+
 describe("login and refresh rotation", () => {
   let accessToken = "";
   let refreshToken = "";
