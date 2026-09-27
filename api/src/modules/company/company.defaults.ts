@@ -274,7 +274,9 @@ async function seedReferenceData(
       message:
         "تم تجهيز مساحة عمل شركتك. ابدأ بإضافة منتجاتك الأولى، ثم اربط مصادر الطلبات لتظهر الطلبات تلقائياً.",
       category: "GENERAL",
-      link: "/products",
+      // The dashboard prefix is required: the bell navigates this value
+      // verbatim, and a bare "/products" matches no route.
+      link: "/dashboard/products",
     },
   });
 }
