@@ -1,4 +1,11 @@
 # Mawzun
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="preview/mawzun_white.svg">
+       
+  <img src="preview/mawzun_black.svg" alt="موزون" width="220">
+</picture>
+
+
 
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-blue)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -17,27 +24,8 @@ is also developed in its own private repository; this tree is synced from those.
 
 ## Preview
 
-[![Watch the Mawzun trailer](preview/poster-dash.jpg)](https://raw.githubusercontent.com/MohamedAYassin/Mawzun/main/preview/trailer.mp4)
+https://github.com/user-attachments/assets/c7a22d41-cd9b-4347-ab9f-815ececb5a8c
 
-<video src="https://raw.githubusercontent.com/MohamedAYassin/Mawzun/main/preview/trailer.mp4"
-       poster="preview/poster-dash.jpg" controls width="100%"></video>
-
-A 56-second tour of the platform: the Arabic RTL dashboard, the observability
-pipeline, the metric browser, the rate-limit behaviour, the alert rules and the
-agent API — ending on the brand mark. Every frame is the real product.
-
-### Brand
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="preview/mawzun_white.svg">
-  <img src="preview/mawzun_black.svg" alt="موزون" width="220">
-</picture>
-
-<img src="preview/logo_scale.svg" alt="Mawzun — the scales" width="150">
-
-The wordmark is **موزون**; the mark is a balance — a stack of coins against a
-crate, weighing what came in against what went out. Both are SVG and scale to
-any size. The trailer and the brand marks live in [`preview/`](preview/).
 
 ## What is here
 
