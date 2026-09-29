@@ -104,6 +104,21 @@ function Welcome({ navigate }: WelcomeProps) {
           </nav>
 
           <div className="landing-nav-actions">
+            {/* The source is public, so the header carries it beside the two
+                account actions. The icon is inline SVG rather than an <img>
+                so it inherits currentColor and needs no extra request. */}
+            <a
+              className="landing-btn-github"
+              href="https://github.com/MohamedAYassin/Mawzun"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="الكود المصدري على GitHub"
+              title="الكود المصدري على GitHub"
+            >
+              <svg viewBox="0 0 16 16" width="17" height="17" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+              </svg>
+            </a>
             <button className="landing-btn-ghost" onClick={() => navigate('/login')}>
               {t.login}
             </button>
@@ -130,6 +145,20 @@ function Welcome({ navigate }: WelcomeProps) {
             <button className="landing-btn-outline landing-btn-lg" onClick={() => navigate('/login')}>
               {t.login}
             </button>
+            {/* The hero carries the labelled version; the header keeps the
+                icon-only one, and only the hero's survives on narrow screens
+                (see the 900px breakpoint) so the nav row cannot overflow. */}
+            <a
+              className="landing-btn-outline landing-btn-lg landing-btn-github-lg"
+              href="https://github.com/MohamedAYassin/Mawzun"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+              </svg>
+              الكود المصدري
+            </a>
           </div>
           <p className="landing-hero-note">{t.heroNote}</p>
 

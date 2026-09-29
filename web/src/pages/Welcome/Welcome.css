@@ -91,7 +91,8 @@ button.landing-brand {
 
 .landing-btn,
 .landing-btn-ghost,
-.landing-btn-outline {
+.landing-btn-outline,
+.landing-btn-github {
   font-family: inherit;
   font-size: var(--fs-base);
   font-weight: 600;
@@ -101,6 +102,45 @@ button.landing-brand {
   border: 1px solid transparent;
   transition: background var(--transition), color var(--transition), border-color var(--transition);
   white-space: nowrap;
+}
+
+/* The GitHub link is an icon-only action, so it takes the ghost button's
+   look with a square-ish hit area instead of text padding.
+   `align-self: stretch` makes it match the height of the text buttons beside
+   it without hardcoding a pixel value: the flex line's height is set by the
+   tallest item, and the icon alone would otherwise be ~4px shorter. */
+.landing-btn-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  padding: 0.5rem 0.6rem;
+  background: transparent;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.landing-btn-github:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.landing-btn-github svg {
+  display: block;
+}
+
+/* The hero's GitHub link carries a label, so it is a normal outline button
+   with an icon rather than an icon-only square. */
+.landing-btn-github-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+}
+
+.landing-btn-github-lg svg {
+  display: block;
+  flex: 0 0 auto;
 }
 
 .landing-btn-ghost {
@@ -560,6 +600,12 @@ button.landing-brand {
     grid-template-columns: repeat(2, 1fr);
   }
   .landing-nav-links {
+    display: none;
+  }
+  /* Narrow screens keep only the hero's labelled GitHub button. Two GitHub
+     affordances in one viewport is redundant, and the header row has no room
+     left once the nav links collapse. */
+  .landing-nav-actions .landing-btn-github {
     display: none;
   }
   .preview-side {
